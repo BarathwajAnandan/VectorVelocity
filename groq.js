@@ -10,6 +10,13 @@ dotenv.config();
 
 // API Provider configurations
 const API_PROVIDERS = {
+    TOGETHERAI: {
+        name: 'TogetherAI',
+        apiUrl: 'https://api.together.xyz/v1/chat/completions',
+        apiKey: process.env.TOGETHERAI_API_KEY,
+        model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
+        makeApiCall: makeTogetherAIApiCall
+    },
     GROQ: {
         name: 'Groq',
         apiUrl: 'https://api.groq.com/openai/v1/chat/completions',
@@ -29,7 +36,7 @@ const API_PROVIDERS = {
         apiKey: process.env.NVIDIA_API_KEY,
         model: 'meta/llama-3.1-70b-instruct',
         makeApiCall: makeNvidiaApiCall
-    }
+    },
     // Add more providers here as needed
 };
 
@@ -42,7 +49,10 @@ async function makeApiCall(provider, prompt) {
     
     const payload = {
         model: provider.model,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [
+            { role: 'system', content: 'You are a helpful assistant' },
+            { role: 'user', content: prompt }
+        ],
         stream: true
     };
 
@@ -76,7 +86,10 @@ async function makeNvidiaApiCall(prompt) {
 
     const completion = await openai.chat.completions.create({
         model: API_PROVIDERS.NVIDIA.model,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [
+            { role: 'system', content: 'You are a helpful assistant' },
+            { role: 'user', content: prompt }
+        ],
         temperature: 0.2,
         top_p: 0.7,
         max_tokens: 1024,
@@ -84,6 +97,34 @@ async function makeNvidiaApiCall(prompt) {
     });
 
     return completion[Symbol.asyncIterator]();
+}
+
+async function makeTogetherAIApiCall(prompt) {
+    const headers = {
+        'Authorization': `Bearer ${API_PROVIDERS.TOGETHERAI.apiKey}`,
+        'Content-Type': 'application/json'
+    };
+    
+    const payload = {
+        model: API_PROVIDERS.TOGETHERAI.model,
+        messages: [
+            { role: 'system', content: 'You are a helpful assistant' },
+            { role: 'user', content: prompt }
+        ],
+        stream: true
+    };
+
+    const response = await fetch(API_PROVIDERS.TOGETHERAI.apiUrl, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.body.getReader();
 }
 
 // Function to stream tokens per second
@@ -102,8 +143,10 @@ async function* streamTokensPerSecond(provider, prompt) {
                 if (content) {
                     tokenCount += content.trim().split(/\s+/).filter(word => word.length > 0).length;
                     const elapsedTime = (Date.now() - startTime) / 1000;
-                    const tokensPerSecond = tokenCount / elapsedTime;
-                    yield tokensPerSecond;
+                    if (elapsedTime > 0) {
+                        const tokensPerSecond = tokenCount / elapsedTime;
+                        yield tokensPerSecond;
+                    }
                 }
             }
         } else {
@@ -126,8 +169,10 @@ async function* streamTokensPerSecond(provider, prompt) {
                             if (content) {
                                 tokenCount += content.trim().split(/\s+/).filter(word => word.length > 0).length;
                                 const elapsedTime = (Date.now() - startTime) / 1000;
-                                const tokensPerSecond = tokenCount / elapsedTime;
-                                yield tokensPerSecond;
+                                if (elapsedTime > 0) {
+                                    const tokensPerSecond = tokenCount / elapsedTime;
+                                    yield tokensPerSecond;
+                                }
                             }
                         } catch (parseError) {
                             console.warn('Error parsing JSON:', parseError);
@@ -149,19 +194,27 @@ async function updateTokensPerSecond(provider, prompt) {
     let count = 0;
 
     for await (const tokensPerSecond of tokenStream) {
-        console.log(`Current tokens per second (${provider.name}): ${tokensPerSecond.toFixed(2)}`);
-        totalTokensPerSecond += tokensPerSecond;
-        count++;
-        // Update your UI here, e.g.:
-        // document.getElementById(`${provider.name.toLowerCase()}TokensPerSecond`).textContent = tokensPerSecond.toFixed(2);
+        if (tokensPerSecond > 0) {
+            console.log(`Current tokens per second (${provider.name}): ${tokensPerSecond.toFixed(2)}`);
+            totalTokensPerSecond += tokensPerSecond;
+            count++;
+            // Update your UI here, e.g.:
+            // document.getElementById(`${provider.name.toLowerCase()}TokensPerSecond`).textContent = tokensPerSecond.toFixed(2);
+        }
     }
 
-    return count > 0 ? totalTokensPerSecond / count : 0;
+    // Add a check to prevent division by zero
+    if (count === 0) {
+        console.warn(`No valid tokens received for ${provider.name}. Check the API response.`);
+        return 0;
+    }
+
+    return totalTokensPerSecond / count;
 }
 
 // Example usage
 async function runTokensPerSecondComparison() {
-    const prompt = 'Tell me about the Milky Way galaxy in 1000 words';
+    const prompt = 'Tell me about the Milky Way galaxy in 100 words';
     const results = {};
 
     // Run for each provider
@@ -171,7 +224,14 @@ async function runTokensPerSecondComparison() {
 
     // Calculate and print average tokens per second
     for (const [providerName, avgTokensPerSecond] of Object.entries(results)) {
-        console.log(`Average tokens per second for ${providerName}: ${avgTokensPerSecond.toFixed(2)}`);
+        console.log(`Debug - Raw value for ${providerName}:`, avgTokensPerSecond);
+        console.log(`Debug - Is finite: ${isFinite(avgTokensPerSecond)}, Is NaN: ${isNaN(avgTokensPerSecond)}`);
+        
+        if (isFinite(avgTokensPerSecond) && !isNaN(avgTokensPerSecond) && avgTokensPerSecond > 0) {
+            console.log(`Average tokens per second for ${providerName}: ${avgTokensPerSecond.toFixed(2)}`);
+        } else {
+            console.log(`Average tokens per second for ${providerName}: Unable to calculate (possibly no valid tokens received)`);
+        }
     }
 }
 
