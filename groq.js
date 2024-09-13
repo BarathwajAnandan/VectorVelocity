@@ -5,8 +5,8 @@ const OpenAI = require('openai');
 // Load environment variables
 dotenv.config();
 
-// API Provider configurations
-const API_PROVIDERS = {
+// Original API Provider configurations
+const API_PROVIDER_OG = {
     TOGETHERAI: {
         name: 'TogetherAI',
         apiUrl: 'https://api.together.xyz/v1/chat/completions',
@@ -41,6 +41,56 @@ const API_PROVIDERS = {
     },
     // Add more providers here as needed
 };
+
+// Create a copy of the original API providers
+let API_PROVIDERS = { ...API_PROVIDER_OG };
+
+// Function to update active providers based on checkbox state
+function updateActiveProviders() {
+    const activeProviders = Array.from(document.querySelectorAll('input[name="provider"]:checked')).map(checkbox => checkbox.value);
+    console.log('Active providers:', activeProviders);
+    // Reset API_PROVIDERS to the original
+    // API_PROVIDERS = { ...API_PROVIDER_OG };
+
+    // Remove providers that are not active
+    for (const provider in API_PROVIDERS) {
+        if (!activeProviders.includes(provider)) {
+            delete API_PROVIDERS[provider]; // Remove the provider if unchecked
+        }
+    }
+}
+
+// Call this function whenever a checkbox state changes
+document.addEventListener('DOMContentLoaded', () => {
+    const providerCheckboxes = document.querySelectorAll('input[name="provider"]');
+    providerCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+            updateActiveProviders(); // This function updates the list of active providers based on the state of the checkboxes
+            console.log('Active providers:', API_PROVIDERS); // Logs the current active providers to the console
+            // updateProviderNames(); // This function updates the displayed provider names in the UI
+        });
+    });
+});
+
+// Function to update provider names in the UI
+function updateProviderNames() {
+    const modelNamesContainer = document.getElementById('modelNames');
+    modelNamesContainer.innerHTML = ''; // Clear existing names
+
+    Object.keys(API_PROVIDERS).forEach(providerKey => {
+        const provider = API_PROVIDERS[providerKey];
+        const providerDiv = document.createElement('div');
+        providerDiv.className = 'model-name';
+        providerDiv.innerHTML = `
+            <input type="checkbox" id="${providerKey}" name="provider" value="${providerKey}" checked>
+            <label for="${providerKey}">${provider.name} (Model: ${provider.model})</label>
+        `;
+        modelNamesContainer.appendChild(providerDiv);
+    });
+}
+
+// Call this function to initialize the provider names when the page loads
+updateProviderNames();
 
 // Generic function to make API calls
 async function makeApiCall(provider, prompt) {
@@ -333,64 +383,4 @@ function getTokensPerSecondList(providerName) {
 global.API_PROVIDERS = API_PROVIDERS;
 global.getTokensPerSecondList = getTokensPerSecondList;
 
-function updateActiveProviders() {
-    const activeProviders = Array.from(document.querySelectorAll('input[name="provider"]:checked')).map(checkbox => checkbox.value);
-    console.log('Active providers:', activeProviders);
 
-    // Remove providers that are not active
-    for (const provider in API_PROVIDERS) {
-        if (!activeProviders.includes(provider)) {
-            delete API_PROVIDERS[provider];
-        }
-    }
-
-    // Add providers that are active but not in API_PROVIDERS
-    for (const provider of activeProviders) {
-        if (!API_PROVIDERS[provider]) {
-            // Assuming we have a predefined list of all possible providers
-            const allProviders = {
-                TOGETHERAI: {
-                    name: 'TogetherAI',
-                    apiUrl: 'https://api.together.xyz/v1/chat/completions',
-                    apiKey: process.env.TOGETHERAI_API_KEY,
-                    model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
-                    makeApiCall: makeTogetherAIApiCall,
-                    tokensPerSecondList: []
-                },
-                GROQ: {
-                    name: 'Groq',
-                    apiUrl: 'https://api.groq.com/openai/v1/chat/completions',
-                    apiKey: process.env.GROQ_API_KEY,
-                    model: 'llama-3.1-70b-versatile',
-                    makeApiCall: makeGroqApiCall,
-                    tokensPerSecondList: []
-                },
-                SAMBANOVA: {
-                    name: 'SambaNova',
-                    apiUrl: 'https://api.sambanova.ai/v1/chat/completions',
-                    apiKey: process.env.SNOVA_API_KEY,
-                    model: 'Meta-Llama-3.1-70B-Instruct',
-                    makeApiCall: makeSambanovaApiCall,
-                    tokensPerSecondList: []
-                },
-                NVIDIA: {
-                    name: 'NVIDIA',
-                    apiUrl: 'https://integrate.api.nvidia.com/v1/chat/completions',
-                    apiKey: process.env.NVIDIA_API_KEY,
-                    model: 'meta/llama-3.1-70b-instruct',
-                    makeApiCall: makeNvidiaApiCall,
-                    tokensPerSecondList: []
-                }
-            };
-            API_PROVIDERS[provider] = allProviders[provider];
-        }
-    }
-}
-
-// Call this function whenever a checkbox state changes
-providerCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-        updateRaceTrack(); // Update the race track
-        updateActiveProviders(); // Update active providers
-    });
-});
