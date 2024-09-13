@@ -1,8 +1,5 @@
 // Import required modules
 const dotenv = require('dotenv');
-import('node-fetch').then(({ default: fetch }) => {
-  // Your code using fetch goes here
-}).catch(err => console.error('Failed to load node-fetch:', err));
 const OpenAI = require('openai');
 
 // Load environment variables
@@ -33,6 +30,7 @@ const API_PROVIDERS = {
     },
     NVIDIA: {
         name: 'NVIDIA',
+        apiUrl: 'https://integrate.api.nvidia.com/v1/chat/completions',
         apiKey: process.env.NVIDIA_API_KEY,
         model: 'meta/llama-3.1-70b-instruct',
         makeApiCall: makeNvidiaApiCall
@@ -79,24 +77,36 @@ async function makeSambanovaApiCall(prompt) {
 }
 
 async function makeNvidiaApiCall(prompt) {
-    const openai = new OpenAI({
-        apiKey: API_PROVIDERS.NVIDIA.apiKey,
-        baseURL: 'https://integrate.api.nvidia.com/v1',
-    });
-
-    const completion = await openai.chat.completions.create({
+    const headers = {
+        'Authorization': `Bearer ${API_PROVIDERS.NVIDIA.apiKey}`,
+        'Content-Type': 'application/json'
+    };
+    
+    const payload = {
         model: API_PROVIDERS.NVIDIA.model,
         messages: [
             { role: 'system', content: 'You are a helpful assistant' },
             { role: 'user', content: prompt }
         ],
-        temperature: 0.2,
-        top_p: 0.7,
+        stream: true,
         max_tokens: 1024,
-        stream: true
+        presence_penalty: 0,
+        frequency_penalty: 0,
+        top_p: 0.7,
+        temperature: 0.2
+    };
+
+    const response = await fetch(API_PROVIDERS.NVIDIA.apiUrl, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(payload)
     });
 
-    return completion[Symbol.asyncIterator]();
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.body.getReader();
 }
 
 async function makeTogetherAIApiCall(prompt) {
@@ -137,46 +147,32 @@ async function* streamTokensPerSecond(provider, prompt) {
         let tokenCount = 0;
         let buffer = '';
 
-        if (provider.name === 'NVIDIA') {
-            for await (const chunk of reader) {
-                const content = chunk.choices[0]?.delta?.content || '';
-                if (content) {
-                    tokenCount += content.trim().split(/\s+/).filter(word => word.length > 0).length;
-                    const elapsedTime = (Date.now() - startTime) / 1000;
-                    if (elapsedTime > 0) {
-                        const tokensPerSecond = tokenCount / elapsedTime;
-                        yield tokensPerSecond;
-                    }
-                }
-            }
-        } else {
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop() || '';
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
 
-                for (const line of lines) {
-                    if (line.startsWith('data: ')) {
-                        const data = line.slice(6).trim();
-                        if (data === '[DONE]') break;
-                        
-                        try {
-                            const jsonData = JSON.parse(data);
-                            const content = jsonData.choices[0]?.delta?.content || '';
-                            if (content) {
-                                tokenCount += content.trim().split(/\s+/).filter(word => word.length > 0).length;
-                                const elapsedTime = (Date.now() - startTime) / 1000;
-                                if (elapsedTime > 0) {
-                                    const tokensPerSecond = tokenCount / elapsedTime;
-                                    yield tokensPerSecond;
-                                }
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    const data = line.slice(6).trim();
+                    if (data === '[DONE]') break;
+                    
+                    try {
+                        const jsonData = JSON.parse(data);
+                        const content = jsonData.choices[0]?.delta?.content || '';
+                        if (content) {
+                            tokenCount += content.trim().split(/\s+/).filter(word => word.length > 0).length;
+                            const elapsedTime = (Date.now() - startTime) / 1000;
+                            if (elapsedTime > 0) {
+                                const tokensPerSecond = tokenCount / elapsedTime;
+                                yield tokensPerSecond;
                             }
-                        } catch (parseError) {
-                            console.warn('Error parsing JSON:', parseError);
                         }
+                    } catch (parseError) {
+                        console.warn('Error parsing JSON:', parseError);
                     }
                 }
             }
@@ -219,7 +215,9 @@ async function runTokensPerSecondComparison() {
 
     // Run for each provider
     for (const provider of Object.values(API_PROVIDERS)) {
+        console.log(`Starting comparison for ${provider.name}`);
         results[provider.name] = await updateTokensPerSecond(provider, prompt);
+        console.log(`Finished comparison for ${provider.name}. Result: ${results[provider.name]}`);
     }
 
     // Calculate and print average tokens per second
@@ -233,6 +231,8 @@ async function runTokensPerSecondComparison() {
             console.log(`Average tokens per second for ${providerName}: Unable to calculate (possibly no valid tokens received)`);
         }
     }
+
+    return results;
 }
 
 // Call this function to start the comparison
@@ -256,3 +256,6 @@ async function makeNewProviderApiCall(prompt) {
     return makeApiCall(API_PROVIDERS.NEW_PROVIDER, prompt);
 }
 */
+
+// Expose API_PROVIDERS to the global scope
+global.API_PROVIDERS = API_PROVIDERS;

@@ -1,7 +1,16 @@
 {
+  "name": "ai-model-race-track",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
   "dependencies": {
     "dotenv": "^16.4.5",
     "node-fetch": "^3.3.2",
     "openai": "^4.60.0"
+  },
+  "devDependencies": {
+    "electron": "^32.1.0"
   }
 }

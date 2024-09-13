@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Model Race Track</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #raceTrack {
+            width: 100%;
+            max-width: 1000px;
+            height: 400px;
+            background-color: #4CAF50;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .car {
+            width: 60px;
+            height: 30px;
+            position: absolute;
+            left: 0;
+            transition: left 0.1s linear; /* Reduced transition time for smoother movement */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+        }
+        .car-name {
+            margin-bottom: 2px;
+        }
+        .car-speed {
+            font-weight: bold;
+        }
+        #startButton {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #winner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="raceTrack">
+        <button id="startButton">Start Race</button>
+        <div id="winner"></div>
+    </div>
+
+    <script src="groq.js"></script>
+    <script>
+        const raceTrack = document.getElementById('raceTrack');
+        const startButton = document.getElementById('startButton');
+        const winnerDisplay = document.getElementById('winner');
+        const providers = Object.keys(API_PROVIDERS);
+        const cars = {};
+        const finishLine = 7000;
+        const updateInterval = 100; // Update every 100ms
+        let raceActive = false;
+        let finishedProviders = new Set();
+
+        providers.forEach((provider, index) => {
+            const car = document.createElement('div');
+            car.className = 'car';
+            car.style.top = `${50 + index * 80}px`;
+            car.style.backgroundColor = `hsl(${index * 90}, 70%, 50%)`;
+            car.innerHTML = `
+                <div class="car-name">${provider}</div>
+                <div class="car-speed">0 t/s</div>
+            `;
+            raceTrack.appendChild(car);
+            cars[provider] = { element: car, position: 0, tokensPerSecond: 0 };
+        });
+
+        async function updateCarPosition(provider) {
+            if (cars[provider] && raceActive && !finishedProviders.has(provider)) {
+                const tokensPerSecond = await updateTokensPerSecond(API_PROVIDERS[provider], 'Tell me about the Milky Way galaxy in 100 words');
+                cars[provider].tokensPerSecond = tokensPerSecond;
+                cars[provider].element.querySelector('.car-speed').textContent = `${tokensPerSecond.toFixed(1)} t/s`;
+                
+                setTimeout(() => updateCarPosition(provider), updateInterval);
+            }
+        }
+
+        function moveCards() {
+            if (raceActive) {
+                const trackWidth = raceTrack.offsetWidth;
+                for (const [provider, car] of Object.entries(cars)) {
+                    if (car.tokensPerSecond && !finishedProviders.has(provider)) {
+                        car.position += (car.tokensPerSecond / 10); // Adjust speed factor as needed
+                        const scaledPosition = (car.position / finishLine) * (trackWidth - car.element.offsetWidth);
+                        car.element.style.left = `${Math.min(scaledPosition, trackWidth - car.element.offsetWidth)}px`;
+                        
+                        if (car.position >= finishLine) {
+                            finishProvider(provider);
+                        }
+                    }
+                }
+                requestAnimationFrame(moveCards);
+            }
+        }
+
+        async function startRace() {
+            Object.values(cars).forEach(car => {
+                car.element.style.left = '0px';
+                car.position = 0;
+                car.tokensPerSecond = 0;
+            });
+            winnerDisplay.style.display = 'none';
+            raceActive = true;
+            finishedProviders.clear();
+            for (const provider of providers) {
+                updateCarPosition(provider);
+            }
+            moveCards();
+        }
+
+        function finishProvider(provider) {
+            finishedProviders.add(provider);
+            if (finishedProviders.size === 1) {
+                winnerDisplay.textContent = `${provider} wins!`;
+                winnerDisplay.style.display = 'block';
+            }
+            if (finishedProviders.size === providers.length) {
+                endRace();
+            }
+        }
+
+        function endRace() {
+            raceActive = false;
+        }
+
+        startButton.addEventListener('click', startRace);
+
+        // Adjust race track size on window resize
+        window.addEventListener('resize', () => {
+            if (!raceActive) {
+                Object.values(cars).forEach(car => {
+                    car.element.style.left = '0px';
+                    car.position = 0;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
