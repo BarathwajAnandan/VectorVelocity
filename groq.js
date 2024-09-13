@@ -332,3 +332,65 @@ function getTokensPerSecondList(providerName) {
 // Expose API_PROVIDERS and getTokensPerSecondList to the global scope
 global.API_PROVIDERS = API_PROVIDERS;
 global.getTokensPerSecondList = getTokensPerSecondList;
+
+function updateActiveProviders() {
+    const activeProviders = Array.from(document.querySelectorAll('input[name="provider"]:checked')).map(checkbox => checkbox.value);
+    console.log('Active providers:', activeProviders);
+
+    // Remove providers that are not active
+    for (const provider in API_PROVIDERS) {
+        if (!activeProviders.includes(provider)) {
+            delete API_PROVIDERS[provider];
+        }
+    }
+
+    // Add providers that are active but not in API_PROVIDERS
+    for (const provider of activeProviders) {
+        if (!API_PROVIDERS[provider]) {
+            // Assuming we have a predefined list of all possible providers
+            const allProviders = {
+                TOGETHERAI: {
+                    name: 'TogetherAI',
+                    apiUrl: 'https://api.together.xyz/v1/chat/completions',
+                    apiKey: process.env.TOGETHERAI_API_KEY,
+                    model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
+                    makeApiCall: makeTogetherAIApiCall,
+                    tokensPerSecondList: []
+                },
+                GROQ: {
+                    name: 'Groq',
+                    apiUrl: 'https://api.groq.com/openai/v1/chat/completions',
+                    apiKey: process.env.GROQ_API_KEY,
+                    model: 'llama-3.1-70b-versatile',
+                    makeApiCall: makeGroqApiCall,
+                    tokensPerSecondList: []
+                },
+                SAMBANOVA: {
+                    name: 'SambaNova',
+                    apiUrl: 'https://api.sambanova.ai/v1/chat/completions',
+                    apiKey: process.env.SNOVA_API_KEY,
+                    model: 'Meta-Llama-3.1-70B-Instruct',
+                    makeApiCall: makeSambanovaApiCall,
+                    tokensPerSecondList: []
+                },
+                NVIDIA: {
+                    name: 'NVIDIA',
+                    apiUrl: 'https://integrate.api.nvidia.com/v1/chat/completions',
+                    apiKey: process.env.NVIDIA_API_KEY,
+                    model: 'meta/llama-3.1-70b-instruct',
+                    makeApiCall: makeNvidiaApiCall,
+                    tokensPerSecondList: []
+                }
+            };
+            API_PROVIDERS[provider] = allProviders[provider];
+        }
+    }
+}
+
+// Call this function whenever a checkbox state changes
+providerCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+        updateRaceTrack(); // Update the race track
+        updateActiveProviders(); // Update active providers
+    });
+});
