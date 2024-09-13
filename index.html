@@ -28,7 +28,7 @@
             height: 30px;
             position: absolute;
             left: 0;
-            transition: left 0.1s linear; /* Reduced transition time for smoother movement */
+            transition: left 0.1s linear;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -52,6 +52,14 @@
             font-size: 16px;
             cursor: pointer;
         }
+        #stopButton {
+            position: absolute;
+            top: 10px;
+            left: 150px; /* Adjust position for the stop button */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
         #winner {
             position: absolute;
             top: 50%;
@@ -63,19 +71,38 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
             display: none;
         }
+        #streamModeContainer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column; /* Maintain vertical layout for better text placement */
+            align-items: flex-start; /* Align items to the start for better readability */
+            gap: 5px; /* Add space between items for improved layout */
+        }
     </style>
 </head>
 <body>
     <div id="raceTrack">
         <button id="startButton">Start Race</button>
+        <button id="stopButton">Stop Race</button> <!-- Added Stop Race button -->
         <div id="winner"></div>
+        <div id="streamModeContainer">
+            <input type="radio" id="streamModeDirect" name="streamMode" value="direct">
+            <label for="streamModeDirect">Stream tokens Directly</label>
+            <input type="radio" id="streamModeSave" name="streamMode" value="save" checked>
+            <label for="streamModeSave">Stream and save tokens for all and then race</label>
+        </div>
     </div>
 
     <script src="groq.js"></script>
     <script>
         const raceTrack = document.getElementById('raceTrack');
         const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton'); // Reference to Stop button
         const winnerDisplay = document.getElementById('winner');
+        const streamModeDirect = document.getElementById('streamModeDirect');
+        const streamModeSave = document.getElementById('streamModeSave');
         const providers = Object.keys(API_PROVIDERS);
         const cars = {};
         const finishLine = 7000;
@@ -93,14 +120,26 @@
                 <div class="car-speed">0 t/s</div>
             `;
             raceTrack.appendChild(car);
-            cars[provider] = { element: car, position: 0, tokensPerSecond: 0 };
+            cars[provider] = { element: car, position: 0, tokensPerSecond: 0, index: 0 };
         });
 
         async function updateCarPosition(provider) {
             if (cars[provider] && raceActive && !finishedProviders.has(provider)) {
-                const tokensPerSecond = await updateTokensPerSecond(API_PROVIDERS[provider], 'Tell me about the Milky Way galaxy in 100 words');
-                cars[provider].tokensPerSecond = tokensPerSecond;
-                cars[provider].element.querySelector('.car-speed').textContent = `${tokensPerSecond.toFixed(1)} t/s`;
+                let tokensPerSecond;
+                if (streamModeDirect.checked) {
+                    tokensPerSecond = await updateTokensPerSecond(API_PROVIDERS[provider], 'Tell me about the Milky Way galaxy in 100 words');
+                } else {
+                    const tokensPerSecondList = getTokensPerSecondList(provider);
+                    if (tokensPerSecondList && cars[provider].index < tokensPerSecondList.length) {
+                        tokensPerSecond = tokensPerSecondList[cars[provider].index];
+                        cars[provider].index++;
+                    }
+                }
+                
+                if (tokensPerSecond) {
+                    cars[provider].tokensPerSecond = tokensPerSecond;
+                    cars[provider].element.querySelector('.car-speed').textContent = `${tokensPerSecond.toFixed(1)} t/s`;
+                }
                 
                 setTimeout(() => updateCarPosition(provider), updateInterval);
             }
@@ -111,7 +150,7 @@
                 const trackWidth = raceTrack.offsetWidth;
                 for (const [provider, car] of Object.entries(cars)) {
                     if (car.tokensPerSecond && !finishedProviders.has(provider)) {
-                        car.position += (car.tokensPerSecond / 10); // Adjust speed factor as needed
+                        car.position += (car.tokensPerSecond / 10);
                         const scaledPosition = (car.position / finishLine) * (trackWidth - car.element.offsetWidth);
                         car.element.style.left = `${Math.min(scaledPosition, trackWidth - car.element.offsetWidth)}px`;
                         
@@ -129,10 +168,16 @@
                 car.element.style.left = '0px';
                 car.position = 0;
                 car.tokensPerSecond = 0;
+                car.index = 0;
             });
             winnerDisplay.style.display = 'none';
             raceActive = true;
             finishedProviders.clear();
+
+            if (streamModeSave.checked) {
+                await runSimultaneousComparison();
+            }
+
             for (const provider of providers) {
                 updateCarPosition(provider);
             }
@@ -154,9 +199,20 @@
             raceActive = false;
         }
 
-        startButton.addEventListener('click', startRace);
+        function stopRace() {
+            endRace();
+            Object.values(cars).forEach(car => {
+                car.element.style.left = '0px';
+                car.position = 0;
+                car.tokensPerSecond = 0;
+                car.index = 0;
+            });
+            winnerDisplay.style.display = 'none';
+        }
 
-        // Adjust race track size on window resize
+        startButton.addEventListener('click', startRace);
+        stopButton.addEventListener('click', stopRace); // Event listener for Stop button
+
         window.addEventListener('resize', () => {
             if (!raceActive) {
                 Object.values(cars).forEach(car => {

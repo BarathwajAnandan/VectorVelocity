@@ -12,28 +12,32 @@ const API_PROVIDERS = {
         apiUrl: 'https://api.together.xyz/v1/chat/completions',
         apiKey: process.env.TOGETHERAI_API_KEY,
         model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
-        makeApiCall: makeTogetherAIApiCall
+        makeApiCall: makeTogetherAIApiCall,
+        tokensPerSecondList: []
     },
     GROQ: {
         name: 'Groq',
         apiUrl: 'https://api.groq.com/openai/v1/chat/completions',
         apiKey: process.env.GROQ_API_KEY,
         model: 'llama-3.1-70b-versatile',
-        makeApiCall: makeGroqApiCall
+        makeApiCall: makeGroqApiCall,
+        tokensPerSecondList: []
     },
     SAMBANOVA: {
         name: 'SambaNova',
         apiUrl: 'https://api.sambanova.ai/v1/chat/completions',
         apiKey: process.env.SNOVA_API_KEY,
         model: 'Meta-Llama-3.1-70B-Instruct',
-        makeApiCall: makeSambanovaApiCall
+        makeApiCall: makeSambanovaApiCall,
+        tokensPerSecondList: []
     },
     NVIDIA: {
         name: 'NVIDIA',
         apiUrl: 'https://integrate.api.nvidia.com/v1/chat/completions',
         apiKey: process.env.NVIDIA_API_KEY,
         model: 'meta/llama-3.1-70b-instruct',
-        makeApiCall: makeNvidiaApiCall
+        makeApiCall: makeNvidiaApiCall,
+        tokensPerSecondList: []
     },
     // Add more providers here as needed
 };
@@ -168,6 +172,7 @@ async function* streamTokensPerSecond(provider, prompt) {
                             const elapsedTime = (Date.now() - startTime) / 1000;
                             if (elapsedTime > 0) {
                                 const tokensPerSecond = tokenCount / elapsedTime;
+                                provider.tokensPerSecondList.push(tokensPerSecond);
                                 yield tokensPerSecond;
                             }
                         }
@@ -183,6 +188,80 @@ async function* streamTokensPerSecond(provider, prompt) {
     }
 }
 
+// Function to stream responses from all API providers concurrently
+async function streamAllProviders(prompt) {
+    const providerStreams = Object.values(API_PROVIDERS).map(provider => ({
+        name: provider.name,
+        stream: streamTokensPerSecond(provider, prompt)
+    }));
+
+    const results = {};
+    const startTime = Date.now(); // Record the start time of the operation
+
+    // Create a function to handle streaming for each provider
+    const handleStream = async ({ name, stream }) => {
+        let totalTokens = 0; // Initialize total tokens to 0
+        let lastUpdateTime = startTime; // Initialize last update time to the start time
+
+        console.log(`Starting to handle stream for ${name}`); // Debug print to indicate the start of handling for a provider
+
+        let skipCount = 0; // Initialize a counter to skip the first 4 values
+        for await (const value of stream) {
+            if (skipCount < 4) { // Skip the first 4 values
+                skipCount++;
+                continue;
+            }
+
+            // console.log(`Current tokens per second (${name}): ${value.toFixed(2)}`); // Log the current tokens per second
+            if (value > 0) { // Only add positive values to the provider's list
+                const provider = Object.values(API_PROVIDERS).find(p => p.name === name);
+                if (provider) {
+                    provider.tokensPerSecondList.push(value); // Add the last received value to the provider's list
+                } else {
+                    console.warn(`Provider ${name} not found in API_PROVIDERS`);
+                }
+            }
+        }
+
+        console.log(`Stream handling completed for ${name}`); // Debug print to indicate the completion of handling for a provider
+
+        // Log the last received value as the average tokens per second for this provider
+        const provider = Object.values(API_PROVIDERS).find(p => p.name === name);
+        if (provider && provider.tokensPerSecondList.length > 0) {
+            const avgTokensPerSecond = provider.tokensPerSecondList.reduce((acc, curr) => acc + curr, 0) / provider.tokensPerSecondList.length;
+            console.log(`Average tokens per second for ${name}: ${avgTokensPerSecond.toFixed(2)}`); // Log the average tokens per second
+            results[name] = { totalTokens, avgTokensPerSecond }; // Store the results for the provider
+        } else {
+            console.warn(`No tokens per second data available for ${name}`);
+        }
+    };
+
+    // Start streaming for all providers concurrently
+    await Promise.all(providerStreams.map(handleStream));
+
+    // Print the saved list of tokens/second for each provider
+    for (const provider of Object.values(API_PROVIDERS)) {
+        console.log(`Tokens per second list for ${provider.name}:`, provider.tokensPerSecondList);
+    }
+
+    return results;
+}
+
+// Example usage of the new function
+async function runSimultaneousComparison() {
+    const prompt = 'Tell me about the Milky Way galaxy in 100 words';
+    console.log('Starting simultaneous comparison for all providers');
+    const results = await streamAllProviders(prompt);
+    
+    // Log results for each provider
+    for (const [providerName, result] of Object.entries(results)) {
+        console.log(`Results for ${providerName}:`, result);
+    }
+
+    console.log('Finished simultaneous comparison');
+    return results;
+}
+
 // Function to update tokens per second for a given provider
 async function updateTokensPerSecond(provider, prompt) {
     const tokenStream = streamTokensPerSecond(provider, prompt);
@@ -194,16 +273,16 @@ async function updateTokensPerSecond(provider, prompt) {
             console.log(`Current tokens per second (${provider.name}): ${tokensPerSecond.toFixed(2)}`);
             totalTokensPerSecond += tokensPerSecond;
             count++;
-            // Update your UI here, e.g.:
-            // document.getElementById(`${provider.name.toLowerCase()}TokensPerSecond`).textContent = tokensPerSecond.toFixed(2);
         }
     }
 
-    // Add a check to prevent division by zero
     if (count === 0) {
         console.warn(`No valid tokens received for ${provider.name}. Check the API response.`);
         return 0;
     }
+
+    // Print the saved list of tokens/second for the provider
+    console.log(`Tokens per second list for ${provider.name}:`, provider.tokensPerSecondList);
 
     return totalTokensPerSecond / count;
 }
@@ -213,14 +292,12 @@ async function runTokensPerSecondComparison() {
     const prompt = 'Tell me about the Milky Way galaxy in 100 words';
     const results = {};
 
-    // Run for each provider
     for (const provider of Object.values(API_PROVIDERS)) {
         console.log(`Starting comparison for ${provider.name}`);
         results[provider.name] = await updateTokensPerSecond(provider, prompt);
         console.log(`Finished comparison for ${provider.name}. Result: ${results[provider.name]}`);
     }
 
-    // Calculate and print average tokens per second
     for (const [providerName, avgTokensPerSecond] of Object.entries(results)) {
         console.log(`Debug - Raw value for ${providerName}:`, avgTokensPerSecond);
         console.log(`Debug - Is finite: ${isFinite(avgTokensPerSecond)}, Is NaN: ${isNaN(avgTokensPerSecond)}`);
@@ -236,26 +313,22 @@ async function runTokensPerSecondComparison() {
 }
 
 // Call this function to start the comparison
-runTokensPerSecondComparison();
+// runTokensPerSecondComparison();
 
-// To add a new provider, simply add a new entry to the API_PROVIDERS object
-// and implement its specific makeApiCall function if needed.
-// Example:
-/*
-API_PROVIDERS.NEW_PROVIDER = {
-    name: 'New Provider',
-    apiUrl: 'https://api.newprovider.com/v1/chat/completions',
-    apiKey: process.env.NEW_PROVIDER_API_KEY,
-    model: 'new-provider-model',
-    makeApiCall: makeNewProviderApiCall
-};
+// You can call this function to start the simultaneous comparison
+// runSimultaneousComparison();
 
-async function makeNewProviderApiCall(prompt) {
-    // Implement the specific API call for the new provider
-    // or use the generic makeApiCall if it follows the same pattern
-    return makeApiCall(API_PROVIDERS.NEW_PROVIDER, prompt);
+// Function to get tokens per second list for a specific provider
+function getTokensPerSecondList(providerName) {
+    const provider = API_PROVIDERS[providerName.toUpperCase()];
+    if (provider) {
+        return provider.tokensPerSecondList;
+    } else {
+        console.warn(`Provider ${providerName} not found.`);
+        return null;
+    }
 }
-*/
 
-// Expose API_PROVIDERS to the global scope
+// Expose API_PROVIDERS and getTokensPerSecondList to the global scope
 global.API_PROVIDERS = API_PROVIDERS;
+global.getTokensPerSecondList = getTokensPerSecondList;
