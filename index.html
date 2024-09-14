@@ -290,14 +290,7 @@
         }
 
         function stopRace() {
-            endRace();
-            Object.values(cars).forEach(car => {
-                car.element.style.left = '0px';
-                car.position = 0;
-                car.tokensPerSecond = 0;
-                car.index = 0;
-            });
-            winnerDisplay.style.display = 'none';
+            location.reload(); // Reload the page
         }
 
         startButton.addEventListener('click', startRace);
