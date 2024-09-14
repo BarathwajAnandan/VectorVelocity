@@ -11,7 +11,12 @@ const API_PROVIDER_OG = {
         name: 'TogetherAI',
         apiUrl: 'https://api.together.xyz/v1/chat/completions',
         apiKey: process.env.TOGETHERAI_API_KEY,
-        model: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
+        models: [
+            'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
+            'meta-llama/Meta-Llama-3.1-70B-Instruct',
+            'meta-llama/Meta-Llama-3.1-34B-Instruct'
+        ],
+        selectedModel: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
         makeApiCall: makeTogetherAIApiCall,
         tokensPerSecondList: []
     },
@@ -19,7 +24,11 @@ const API_PROVIDER_OG = {
         name: 'Groq',
         apiUrl: 'https://api.groq.com/openai/v1/chat/completions',
         apiKey: process.env.GROQ_API_KEY,
-        model: 'llama-3.1-70b-versatile',
+        models: [
+            'llama-3.1-70b-versatile',
+            'llama-3.1-34b-versatile'
+        ],
+        selectedModel: 'llama-3.1-70b-versatile',
         makeApiCall: makeGroqApiCall,
         tokensPerSecondList: []
     },
@@ -27,7 +36,11 @@ const API_PROVIDER_OG = {
         name: 'SambaNova',
         apiUrl: 'https://api.sambanova.ai/v1/chat/completions',
         apiKey: process.env.SNOVA_API_KEY,
-        model: 'Meta-Llama-3.1-70B-Instruct',
+        models: [
+            'Meta-Llama-3.1-70B-Instruct',
+            'Meta-Llama-3.1-34B-Instruct'
+        ],
+        selectedModel: 'Meta-Llama-3.1-70B-Instruct',
         makeApiCall: makeSambanovaApiCall,
         tokensPerSecondList: []
     },
@@ -35,7 +48,11 @@ const API_PROVIDER_OG = {
         name: 'NVIDIA',
         apiUrl: 'https://integrate.api.nvidia.com/v1/chat/completions',
         apiKey: process.env.NVIDIA_API_KEY,
-        model: 'meta/llama-3.1-70b-instruct',
+        models: [
+            'meta/llama-3.1-70b-instruct',
+            'meta/llama-3.1-34b-instruct'
+        ],
+        selectedModel: 'meta/llama-3.1-70b-instruct',
         makeApiCall: makeNvidiaApiCall,
         tokensPerSecondList: []
     },
@@ -49,8 +66,6 @@ let API_PROVIDERS = { ...API_PROVIDER_OG };
 function updateActiveProviders() {
     const activeProviders = Array.from(document.querySelectorAll('input[name="provider"]:checked')).map(checkbox => checkbox.value);
     console.log('Active providers:', activeProviders);
-    // Reset API_PROVIDERS to the original
-    // API_PROVIDERS = { ...API_PROVIDER_OG };
 
     // Remove providers that are not active
     for (const provider in API_PROVIDERS) {
@@ -65,14 +80,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const providerCheckboxes = document.querySelectorAll('input[name="provider"]');
     providerCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
-            updateActiveProviders(); // This function updates the list of active providers based on the state of the checkboxes
-            console.log('Active providers:', API_PROVIDERS); // Logs the current active providers to the console
-            // updateProviderNames(); // This function updates the displayed provider names in the UI
+            updateActiveProviders();
+            console.log('Active providers:', API_PROVIDERS);
+            // updateProviderNames();
         });
     });
 });
 
-// Function to update provider names in the UI
+// Function to update provider names and model selection in the UI
 function updateProviderNames() {
     const modelNamesContainer = document.getElementById('modelNames');
     modelNamesContainer.innerHTML = ''; // Clear existing names
@@ -81,10 +96,30 @@ function updateProviderNames() {
         const provider = API_PROVIDERS[providerKey];
         const providerDiv = document.createElement('div');
         providerDiv.className = 'model-name';
+        
+        const modelSelect = document.createElement('select');
+        modelSelect.id = `${providerKey}-model`;
+        modelSelect.name = `${providerKey}-model`;
+        provider.models.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model;
+            option.textContent = model;
+            if (model === provider.selectedModel) {
+                option.selected = true;
+            }
+            modelSelect.appendChild(option);
+        });
+
+        modelSelect.addEventListener('change', (event) => {
+            provider.selectedModel = event.target.value;
+            console.log(`Selected model for ${provider.name}: ${provider.selectedModel}`);
+        });
+
         providerDiv.innerHTML = `
             <input type="checkbox" id="${providerKey}" name="provider" value="${providerKey}" checked>
-            <label for="${providerKey}">${provider.name} (Model: ${provider.model})</label>
+            <label for="${providerKey}">${provider.name}</label>
         `;
+        providerDiv.appendChild(modelSelect);
         modelNamesContainer.appendChild(providerDiv);
     });
 }
@@ -100,7 +135,7 @@ async function makeApiCall(provider, prompt) {
     };
     
     const payload = {
-        model: provider.model,
+        model: provider.selectedModel,
         messages: [
             { role: 'system', content: 'You are a helpful assistant' },
             { role: 'user', content: prompt }
@@ -137,7 +172,7 @@ async function makeNvidiaApiCall(prompt) {
     };
     
     const payload = {
-        model: API_PROVIDERS.NVIDIA.model,
+        model: API_PROVIDERS.NVIDIA.selectedModel,
         messages: [
             { role: 'system', content: 'You are a helpful assistant' },
             { role: 'user', content: prompt }
@@ -170,7 +205,7 @@ async function makeTogetherAIApiCall(prompt) {
     };
     
     const payload = {
-        model: API_PROVIDERS.TOGETHERAI.model,
+        model: API_PROVIDERS.TOGETHERAI.selectedModel,
         messages: [
             { role: 'system', content: 'You are a helpful assistant' },
             { role: 'user', content: prompt }
@@ -246,50 +281,45 @@ async function streamAllProviders(prompt) {
     }));
 
     const results = {};
-    const startTime = Date.now(); // Record the start time of the operation
+    const startTime = Date.now();
 
-    // Create a function to handle streaming for each provider
     const handleStream = async ({ name, stream }) => {
-        let totalTokens = 0; // Initialize total tokens to 0
-        let lastUpdateTime = startTime; // Initialize last update time to the start time
+        let totalTokens = 0;
+        let lastUpdateTime = startTime;
 
-        console.log(`Starting to handle stream for ${name}`); // Debug print to indicate the start of handling for a provider
+        console.log(`Starting to handle stream for ${name}`);
 
-        let skipCount = 0; // Initialize a counter to skip the first 4 values
+        let skipCount = 0;
         for await (const value of stream) {
-            if (skipCount < 4) { // Skip the first 4 values
+            if (skipCount < 4) {
                 skipCount++;
                 continue;
             }
 
-            // console.log(`Current tokens per second (${name}): ${value.toFixed(2)}`); // Log the current tokens per second
-            if (value > 0) { // Only add positive values to the provider's list
+            if (value > 0) {
                 const provider = Object.values(API_PROVIDERS).find(p => p.name === name);
                 if (provider) {
-                    provider.tokensPerSecondList.push(value); // Add the last received value to the provider's list
+                    provider.tokensPerSecondList.push(value);
                 } else {
                     console.warn(`Provider ${name} not found in API_PROVIDERS`);
                 }
             }
         }
 
-        console.log(`Stream handling completed for ${name}`); // Debug print to indicate the completion of handling for a provider
+        console.log(`Stream handling completed for ${name}`);
 
-        // Log the last received value as the average tokens per second for this provider
         const provider = Object.values(API_PROVIDERS).find(p => p.name === name);
         if (provider && provider.tokensPerSecondList.length > 0) {
             const avgTokensPerSecond = provider.tokensPerSecondList.reduce((acc, curr) => acc + curr, 0) / provider.tokensPerSecondList.length;
-            console.log(`Average tokens per second for ${name}: ${avgTokensPerSecond.toFixed(2)}`); // Log the average tokens per second
-            results[name] = { totalTokens, avgTokensPerSecond }; // Store the results for the provider
+            console.log(`Average tokens per second for ${name}: ${avgTokensPerSecond.toFixed(2)}`);
+            results[name] = { totalTokens, avgTokensPerSecond };
         } else {
             console.warn(`No tokens per second data available for ${name}`);
         }
     };
 
-    // Start streaming for all providers concurrently
     await Promise.all(providerStreams.map(handleStream));
 
-    // Print the saved list of tokens/second for each provider
     for (const provider of Object.values(API_PROVIDERS)) {
         console.log(`Tokens per second list for ${provider.name}:`, provider.tokensPerSecondList);
     }
@@ -303,7 +333,6 @@ async function runSimultaneousComparison() {
     console.log('Starting simultaneous comparison for all providers');
     const results = await streamAllProviders(prompt);
     
-    // Log results for each provider
     for (const [providerName, result] of Object.entries(results)) {
         console.log(`Results for ${providerName}:`, result);
     }
@@ -331,7 +360,6 @@ async function updateTokensPerSecond(provider, prompt) {
         return 0;
     }
 
-    // Print the saved list of tokens/second for the provider
     console.log(`Tokens per second list for ${provider.name}:`, provider.tokensPerSecondList);
 
     return totalTokensPerSecond / count;
@@ -362,12 +390,6 @@ async function runTokensPerSecondComparison() {
     return results;
 }
 
-// Call this function to start the comparison
-// runTokensPerSecondComparison();
-
-// You can call this function to start the simultaneous comparison
-// runSimultaneousComparison();
-
 // Function to get tokens per second list for a specific provider
 function getTokensPerSecondList(providerName) {
     const provider = API_PROVIDERS[providerName.toUpperCase()];
@@ -382,5 +404,3 @@ function getTokensPerSecondList(providerName) {
 // Expose API_PROVIDERS and getTokensPerSecondList to the global scope
 global.API_PROVIDERS = API_PROVIDERS;
 global.getTokensPerSecondList = getTokensPerSecondList;
-
-
