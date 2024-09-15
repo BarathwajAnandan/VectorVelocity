@@ -101,25 +101,57 @@ body {
 }
 #controls {
     width: 100%;
-    max-width: 1200px;
+    max-width: 1150px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
 }
+
+#race-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background-color: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    width: 100%;
+}
+
 #startButton, #stopButton {
-    margin: 10px;
+    margin: 0;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
     border: none;
     border-radius: 5px;
     color: white;
-    background-color: #007BFF;
     transition: background-color 0.3s;
+    background-color: #007BFF;
 }
+
 #startButton:hover, #stopButton:hover {
     background-color: #0056b3;
 }
+
+#finishLineInput {
+    margin: 0;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    color: #ddd;
+    width: 200px;
+    border-radius: 5px;
+}
+
+#finishLineInput:focus {
+    outline: none;
+    border-color: #007BFF;
+}
+
 #winner {
     position: absolute;
     top: 50%;

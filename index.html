@@ -20,9 +20,10 @@
         </div>
     </div>
     <div id="controls">
-        <div>
+        <div id="race-controls">
             <button id="startButton">Start Race</button>
             <button id="stopButton">Stop Race</button>
+            <input type="number" id="finishLineInput" placeholder="Finish line distance" value="7000" min="1000" step="1000">
         </div>
         <div id="streamModeContainer">
             <input type="radio" id="streamModeDirect" name="streamMode" value="direct">
@@ -43,10 +44,17 @@
         const streamModeSave = document.getElementById('streamModeSave');
         const providers = Object.keys(API_PROVIDERS);
         const cars = {};
-        const finishLine = 7000;
+        // const finishLine = 7000;
         const updateInterval = 100; // Update every 100ms
         let raceActive = false;
         let finishedProviders = new Set();
+        const finishLineInput = document.getElementById('finishLineInput');
+        let finishLine = parseInt(finishLineInput.value, 10); // Initialize with the default value
+
+        finishLineInput.addEventListener('change', (event) => {
+            finishLine = parseInt(event.target.value, 10);
+            console.log(`Finish line distance updated to: ${finishLine}`);
+        });
 
         const imageFiles = [ 'racing-car-296772_1920.png']; // Add all available image files here
 
