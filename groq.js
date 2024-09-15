@@ -1,63 +1,27 @@
 // Import required modules
 const dotenv = require('dotenv');
-const OpenAI = require('openai');
+const fs = require('fs');
+const path = require('path');
 
 // Load environment variables
 dotenv.config();
 
-// Original API Provider configurations
-const API_PROVIDER_OG = {
-    TOGETHERAI: {
-        name: 'TogetherAI',
-        apiUrl: 'https://api.together.xyz/v1/chat/completions',
-        apiKey: process.env.TOGETHERAI_API_KEY,
-        models: [
-            'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
-            'meta-llama/Meta-Llama-3.1-70B-Instruct',
-            'meta-llama/Meta-Llama-3.1-34B-Instruct'
-        ],
-        selectedModel: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
-        makeApiCall: makeTogetherAIApiCall,
-        tokensPerSecondList: []
-    },
-    GROQ: {
-        name: 'Groq',
-        apiUrl: 'https://api.groq.com/openai/v1/chat/completions',
-        apiKey: process.env.GROQ_API_KEY,
-        models: [
-            'llama-3.1-70b-versatile',
-            'llama-3.1-34b-versatile'
-        ],
-        selectedModel: 'llama-3.1-70b-versatile',
-        makeApiCall: makeGroqApiCall,
-        tokensPerSecondList: []
-    },
-    SAMBANOVA: {
-        name: 'SambaNova',
-        apiUrl: 'https://api.sambanova.ai/v1/chat/completions',
-        apiKey: process.env.SNOVA_API_KEY,
-        models: [
-            'Meta-Llama-3.1-70B-Instruct',
-            'Meta-Llama-3.1-34B-Instruct'
-        ],
-        selectedModel: 'Meta-Llama-3.1-70B-Instruct',
-        makeApiCall: makeSambanovaApiCall,
-        tokensPerSecondList: []
-    },
-    NVIDIA: {
-        name: 'NVIDIA',
-        apiUrl: 'https://integrate.api.nvidia.com/v1/chat/completions',
-        apiKey: process.env.NVIDIA_API_KEY,
-        models: [
-            'meta/llama-3.1-70b-instruct',
-            'meta/llama-3.1-34b-instruct'
-        ],
-        selectedModel: 'meta/llama-3.1-70b-instruct',
-        makeApiCall: makeNvidiaApiCall,
-        tokensPerSecondList: []
-    },
-    // Add more providers here as needed
-};
+// Read API Provider configurations from JSON file
+const API_PROVIDER_OG = JSON.parse(fs.readFileSync(path.join(__dirname, 'api_providers.json'), 'utf8'));
+
+// Dynamically import makeApiCall functions
+for (const provider in API_PROVIDER_OG) {
+    const makeApiCallFunctionName = API_PROVIDER_OG[provider].makeApiCall;
+    API_PROVIDER_OG[provider].makeApiCall = eval(makeApiCallFunctionName);
+}
+
+// Replace environment variable placeholders with actual values
+for (const provider in API_PROVIDER_OG) {
+    if (API_PROVIDER_OG[provider].apiKey.startsWith('process.env.')) {
+        const envVarName = API_PROVIDER_OG[provider].apiKey.replace('process.env.', '');
+        API_PROVIDER_OG[provider].apiKey = process.env[envVarName];
+    }
+}
 
 // Create a copy of the original API providers
 let API_PROVIDERS = { ...API_PROVIDER_OG };
