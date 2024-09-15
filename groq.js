@@ -231,9 +231,12 @@ async function* streamTokensPerSecond(provider, prompt) {
 
 // Function to stream responses from all API providers concurrently
 async function streamAllProviders(prompt) {
+    const currentPrompt = getCurrentPrompt();
+    console.log(`Using prompt: ${currentPrompt}`);
+    
     const providerStreams = Object.values(API_PROVIDERS).map(provider => ({
         name: provider.name,
-        stream: streamTokensPerSecond(provider, prompt)
+        stream: streamTokensPerSecond(provider, currentPrompt)
     }));
 
     const results = {};
@@ -285,9 +288,10 @@ async function streamAllProviders(prompt) {
 
 // Example usage of the new function
 async function runSimultaneousComparison() {
-    const prompt = 'Tell me about the Milky Way galaxy in 100 words';
+    const currentPrompt = getCurrentPrompt();
     console.log('Starting simultaneous comparison for all providers');
-    const results = await streamAllProviders(prompt);
+    console.log(`Using prompt: ${currentPrompt}`);
+    const results = await streamAllProviders(currentPrompt);
     
     for (const [providerName, result] of Object.entries(results)) {
         console.log(`Results for ${providerName}:`, result);
@@ -299,7 +303,10 @@ async function runSimultaneousComparison() {
 
 // Function to update tokens per second for a given provider
 async function updateTokensPerSecond(provider, prompt) {
-    const tokenStream = streamTokensPerSecond(provider, prompt);
+    const currentPrompt = getCurrentPrompt();
+    console.log(`Updating tokens per second for ${provider.name}`);
+    console.log(`Using prompt: ${currentPrompt}`);
+    const tokenStream = streamTokensPerSecond(provider, currentPrompt);
     let totalTokensPerSecond = 0;
     let count = 0;
 
@@ -323,12 +330,13 @@ async function updateTokensPerSecond(provider, prompt) {
 
 // Example usage
 async function runTokensPerSecondComparison() {
-    const prompt = 'Tell me about the Milky Way galaxy in 100 words';
+    const currentPrompt = getCurrentPrompt();
+    console.log(`Using prompt: ${currentPrompt}`);
     const results = {};
 
     for (const provider of Object.values(API_PROVIDERS)) {
         console.log(`Starting comparison for ${provider.name}`);
-        results[provider.name] = await updateTokensPerSecond(provider, prompt);
+        results[provider.name] = await updateTokensPerSecond(provider, currentPrompt);
         console.log(`Finished comparison for ${provider.name}. Result: ${results[provider.name]}`);
     }
 
@@ -357,8 +365,15 @@ function getTokensPerSecondList(providerName) {
     }
 }
 
+// Add this new function to get the current prompt
+function getCurrentPrompt() {
+    const promptInput = document.getElementById('promptInput');
+    return promptInput.value || 'Tell me about the Milky Way galaxy in 100 words';
+}
+
 // Expose necessary functions to the global scope
 global.API_PROVIDERS = API_PROVIDERS;
 global.getTokensPerSecondList = getTokensPerSecondList;
 global.updateActiveProviders = updateActiveProviders;
 global.runSimultaneousComparison = runSimultaneousComparison;
+global.getCurrentPrompt = getCurrentPrompt;

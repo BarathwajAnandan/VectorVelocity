@@ -4,173 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Model Race Track</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(to bottom, #e0eafc, #cfdef3);
-            animation: backgroundAnimation 10s infinite alternate;
-        }
-        @keyframes backgroundAnimation {
-            0% { background: #e0eafc; }
-            100% { background: #cfdef3; }
-        }
-        #raceTrack {
-            width: 100%;
-            max-width: 1000px;
-            height: 400px;
-            background: linear-gradient(to bottom, #222, #111); /* Gradient for a more visually appealing road */
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-        .lane {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-top: 2px dashed rgba(255, 255, 255, 0.3); /* Subtle dashed lines for lanes */
-            box-sizing: border-box;
-        }
-        /* Adjust lane positions based on the number of cars */
-        .lane:nth-child(1) { top: 50px; }
-        .lane:nth-child(2) { top: 130px; }
-        .lane:nth-child(3) { top: 210px; }
-        .lane:nth-child(4) { top: 290px; }
-        .car {
-            width: 100px;
-            height: 50px;
-            position: absolute;
-            left: 0;
-            transition: left 0.1s linear, transform 0.3s ease-in-out;
-            text-align: center;
-            display: flex;
-            flex-direction: column; /* Change to 'column' to move text below the car */
-            justify-content: center;
-            align-items: center;
-            font-size: 12px;
-            color: white;
-            text-shadow: 1px 1px 2px black;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-            animation: carAnimation 0.5s ease-in-out infinite alternate;
-            
-            /* Removed: transform: rotate(180deg); */
-        }
-        @keyframes carAnimation {
-            0% { transform: translateY(0) rotate(-0deg); } /* Slight rotation at the start */
-            50% { transform: translateY(-0px) rotate(0deg); } /* Slight rotation and bounce at the middle */
-            100% { transform: translateY(0) rotate(-1deg); } /* Slight rotation at the end */
-        }
-        .car img {
-            width: 100px;
-            height: 50px;
-            border-radius: 5px;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        .car-info {
-            position: absolute;
-            bottom: 5px;
-            left: 5px;
-            right: 5px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 3px;
-            padding: 2px;
-            font-size: 10px;
-        }
-        .car-name {
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .car-speed {
-            font-weight: bold;
-        }
-        #controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-        #startButton, #stopButton {
-            margin: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            background-color: #007BFF;
-            transition: background-color 0.3s;
-        }
-        #startButton:hover, #stopButton:hover {
-            background-color: #0056b3;
-        }
-        #winner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 48px;
-            font-weight: bold;
-            color: #FFD700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            display: none;
-            animation: winnerAnimation 1s ease-in-out;
-        }
-        @keyframes winnerAnimation {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.1); }
-            100% { transform: translate(-50%, -50%) scale(1); }
-        }
-        #streamModeContainer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            margin-top: 10px;
-        }
-        input[type="radio"] {
-            margin-right: 5px;
-        }
-        #modelNames {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .model-name {
-            font-size: 14px;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="raceTrack">
-        <div class="lane"></div>
-        <div class="lane"></div>
-        <div class="lane"></div>
-        <div class="lane"></div>
-        <div id="winner"></div>
-    </div>
-    <div id="controls">
+    <div class="container">
+        <div id="raceTrack">
+            <div class="lane"></div>
+            <div class="lane"></div>
+            <div class="lane"></div>
+            <div class="lane"></div>
+            <div id="winner"></div>
+        </div>
         <div id="modelNames">
             <!-- Provider checkboxes and model selects will be dynamically added here -->
         </div>
-        <button id="startButton">Start Race</button>
-        <button id="stopButton">Stop Race</button>
+    </div>
+    <div id="controls">
+        <div>
+            <button id="startButton">Start Race</button>
+            <button id="stopButton">Stop Race</button>
+        </div>
         <div id="streamModeContainer">
             <input type="radio" id="streamModeDirect" name="streamMode" value="direct">
             <label for="streamModeDirect">Stream tokens Directly</label>
             <input type="radio" id="streamModeSave" name="streamMode" value="save" checked>
             <label for="streamModeSave">Stream and save tokens for all and then race</label>
         </div>
+        <input type="text" id="promptInput" placeholder="Enter your prompt here">
     </div>
 
     <script src="groq.js"></script>
@@ -190,32 +50,46 @@
 
         const imageFiles = [ 'racing-car-296772_1920.png']; // Add all available image files here
 
-        providers.forEach((provider, index) => {
-            const car = document.createElement('div');
-            car.className = 'car';
-            car.style.top = `${50 + index * 80}px`;
-            const randomImage = imageFiles[Math.floor(Math.random() * imageFiles.length)];
-            car.innerHTML = `
-                <img src="images/${randomImage}" alt="${provider}">
-                <div class="car-info">
-                    <div class="car-name">${API_PROVIDERS[provider].name}</div>
-                    <div class="car-speed">0 t/s</div>
-                </div>
-            `;
-            raceTrack.appendChild(car);
-            cars[provider] = { element: car, position: 0, tokensPerSecond: 0, index: 0 };
-        });
+        function updateCars() 
+        {
+            raceTrack.innerHTML = '<div class="lane"></div><div class="lane"></div><div class="lane"></div><div class="lane"></div><div id="winner"></div>';
+            let activeIndex = 0;
+            providers.forEach((provider, index) => {
+                if (API_PROVIDERS[provider] && API_PROVIDERS[provider].active !== false) {
+                    const car = document.createElement('div');
+                    car.className = 'car';
+                    const topPosition =  activeIndex * 100 + 25;
+                    car.style.top = `${topPosition}px`;
+                    console.log(`Car for ${provider} positioned at top: ${topPosition}px`);
+                    const randomImage = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+                    car.innerHTML = `
+                        <img src="images/${randomImage}" alt="${provider}">
+                        <div class="car-info">
+                            <div class="car-name">${API_PROVIDERS[provider].name}</div>
+                            <div class="car-speed">0 t/s</div>
+                        </div>
+                    `;
+                    raceTrack.appendChild(car);
+                    cars[provider] = { element: car, position: 0, tokensPerSecond: 0, index: 0, outOfTokens: false };
+                    activeIndex++;
+                }
+            });
+        }
 
         async function updateCarPosition(provider) {
-            if (cars[provider] && raceActive && !finishedProviders.has(provider)) {
+            if (cars[provider] && raceActive && !finishedProviders.has(provider) && !cars[provider].outOfTokens) {
                 let tokensPerSecond;
                 if (streamModeDirect.checked) {
-                    tokensPerSecond = await updateTokensPerSecond(API_PROVIDERS[provider], 'Tell me about the Milky Way galaxy in 100 words');
+                    tokensPerSecond = await updateTokensPerSecond(API_PROVIDERS[provider], getCurrentPrompt());
                 } else {
                     const tokensPerSecondList = getTokensPerSecondList(provider);
                     if (tokensPerSecondList && cars[provider].index < tokensPerSecondList.length) {
                         tokensPerSecond = tokensPerSecondList[cars[provider].index];
                         cars[provider].index++;
+                    } else {
+                        // Provider has run out of tokens
+                        finishProvider(provider, true);
+                        return;
                     }
                 }
                 
@@ -235,12 +109,13 @@
             if (raceActive) {
                 const trackWidth = raceTrack.offsetWidth;
                 for (const [provider, car] of Object.entries(cars)) {
-                    if (car.tokensPerSecond && !finishedProviders.has(provider)) {
+                    if (car.tokensPerSecond && !finishedProviders.has(provider) && !car.outOfTokens) {
                         car.position += (car.tokensPerSecond / 10);
                         const scaledPosition = (car.position / finishLine) * (trackWidth - car.element.offsetWidth);
                         car.element.style.left = `${Math.min(scaledPosition, trackWidth - car.element.offsetWidth)}px`;
                         
-                        if (car.position >= finishLine) {
+                        if (car.position > finishLine) {
+                            console.log(`${API_PROVIDERS[provider].name} finished the race!`);
                             finishProvider(provider);
                         }
                     }
@@ -250,35 +125,104 @@
         }
 
         async function startRace() {
+            updateCars();
             Object.values(cars).forEach(car => {
                 car.element.style.left = '0px';
                 car.position = 0;
                 car.tokensPerSecond = 0;
                 car.index = 0;
+                car.outOfTokens = false;
             });
             winnerDisplay.style.display = 'none';
             raceActive = true;
             finishedProviders.clear();
 
+            // Use the current prompt when starting the race
+            const currentPrompt = getCurrentPrompt();
+            console.log(`Starting race with prompt: ${currentPrompt}`);
             if (streamModeSave.checked) {
                 await runSimultaneousComparison();
             }
 
             for (const provider of providers) {
-                updateCarPosition(provider);
+                if (API_PROVIDERS[provider] && API_PROVIDERS[provider].active !== false) {
+                    updateCarPosition(provider);
+                }
             }
             moveCards();
         }
+        function finishProvider(provider, outOfTokens = false) 
+        {
+            console.log(`finishProvider called for ${provider}. Out of tokens: ${outOfTokens}`);
+            
+            // Check if the provider is active before adding to finishedProviders
+            if (API_PROVIDERS[provider] && API_PROVIDERS[provider].active !== false && !outOfTokens) {
+                finishedProviders.add(provider);
+                console.log(`Current finishedProviders: ${Array.from(finishedProviders)}`);
+            } else {
+                console.log(`Provider ${provider} is disabled, not found, or out of tokens. Not adding to finishedProviders.`);
+            }
 
-        function finishProvider(provider) {
-            finishedProviders.add(provider);
-            cars[provider].element.style.animation = 'none'; // Stop the jiggling animation
-            if (finishedProviders.size === 1) {
+            if (cars[provider]) {
+                console.log(`Stopping animation for ${provider}'s car`);
+                cars[provider].element.style.animation = 'none'; // Stop the jiggling animation
+                
+                if (outOfTokens) {
+                    console.log(`${provider} is out of tokens`);
+                    cars[provider].element.querySelector('.car-speed').textContent = 'Out of tokens';
+                    cars[provider].outOfTokens = true;
+                }
+            } else {
+                console.warn(`Car not found for provider: ${provider}`);
+            }
+
+            // Check if this is the first provider to finish and announce the winner
+            if (finishedProviders.size === 1 && API_PROVIDERS[provider] && !outOfTokens) 
+            {
+                console.log(`First provider to finish: ${provider}`);
+                const winnerDisplay = document.getElementById('winner');
                 winnerDisplay.textContent = `${API_PROVIDERS[provider].name} wins!`;
                 winnerDisplay.style.display = 'block';
+                winnerDisplay.style.position = 'absolute';
+                winnerDisplay.style.top = '10px';
+                winnerDisplay.style.left = '50%';
+                winnerDisplay.style.transform = 'translateX(-50%)';
+                winnerDisplay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                winnerDisplay.style.color = '#FFD700';
+                winnerDisplay.style.padding = '15px';
+                winnerDisplay.style.border = '3px solid #FFD700';
+                winnerDisplay.style.borderRadius = '10px';
+                winnerDisplay.style.fontSize = '24px';
+                winnerDisplay.style.fontWeight = 'bold';
+                winnerDisplay.style.textShadow = '2px 2px 4px #000000';
+                winnerDisplay.style.boxShadow = '0 0 20px #FFD700';
+                winnerDisplay.style.zIndex = '1000';
+                winnerDisplay.style.animation = 'winnerPulse 1.5s infinite';
+
+                // Add keyframe animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes winnerPulse {
+                        0% { transform: translateX(-50%) scale(1); }
+                        50% { transform: translateX(-50%) scale(1.1); }
+                        100% { transform: translateX(-50%) scale(1); }
+                    }
+                `;
+                document.head.appendChild(style);
+
+                console.log(`Winner announced: ${API_PROVIDERS[provider].name}`);
+            } else 
+            {
+                console.log(`Not announcing winner. Finished providers: ${finishedProviders.size}`);
             }
-            if (finishedProviders.size === providers.length) {
+            
+            const activeProviders = providers.filter(p => API_PROVIDERS[p] && API_PROVIDERS[p].active !== false);
+            const finishedActiveProviders = Array.from(finishedProviders).filter(p => activeProviders.includes(p));
+            if (finishedActiveProviders.length === activeProviders.length) {
+                console.log('All active providers have finished. Ending race.');
                 endRace();
+            } else {
+                console.log(`Race continues. Finished: ${finishedActiveProviders.length}/${activeProviders.length}`);
             }
         }
 
@@ -321,6 +265,7 @@
                 checkbox.addEventListener('change', (event) => {
                     console.log(`Checkbox for ${providerKey} changed. Checked: ${event.target.checked}`);
                     updateActiveProviders();
+                    updateCars();
                 });
 
                 const label = document.createElement('label');
@@ -352,10 +297,22 @@
             });
         }
 
+        // Add this function to handle the prompt input
+        function handlePromptInput() {
+            const promptInput = document.getElementById('promptInput');
+            promptInput.addEventListener('change', (event) => {
+                const prompt = event.target.value;
+                console.log('New prompt:', prompt);
+                // You can add logic here to use the new prompt in your race
+            });
+        }
+
         // Call updateProviderNames when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             updateProviderNames();
             updateActiveProviders();
+            handlePromptInput();
+            updateCars();
         });
     </script>
 </body>
