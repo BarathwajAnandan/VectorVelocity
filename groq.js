@@ -67,65 +67,21 @@ function updateActiveProviders() {
     const activeProviders = Array.from(document.querySelectorAll('input[name="provider"]:checked')).map(checkbox => checkbox.value);
     console.log('Active providers:', activeProviders);
 
+    // Reset API_PROVIDERS to the original state
+    API_PROVIDERS = { ...API_PROVIDER_OG };
+
     // Remove providers that are not active
     for (const provider in API_PROVIDERS) {
         if (!activeProviders.includes(provider)) {
-            delete API_PROVIDERS[provider]; // Remove the provider if unchecked
+            console.log(`Removing provider: ${provider}`);
+            delete API_PROVIDERS[provider];
+        } else {
+            console.log(`Keeping provider: ${provider}`);
         }
     }
+
+    console.log('Updated API_PROVIDERS:', Object.keys(API_PROVIDERS));
 }
-
-// Call this function whenever a checkbox state changes
-document.addEventListener('DOMContentLoaded', () => {
-    const providerCheckboxes = document.querySelectorAll('input[name="provider"]');
-    providerCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-            updateActiveProviders();
-            console.log('Active providers:', API_PROVIDERS);
-            // updateProviderNames();
-        });
-    });
-});
-
-// Function to update provider names and model selection in the UI
-function updateProviderNames() {
-    const modelNamesContainer = document.getElementById('modelNames');
-    modelNamesContainer.innerHTML = ''; // Clear existing names
-
-    Object.keys(API_PROVIDERS).forEach(providerKey => {
-        const provider = API_PROVIDERS[providerKey];
-        const providerDiv = document.createElement('div');
-        providerDiv.className = 'model-name';
-        
-        const modelSelect = document.createElement('select');
-        modelSelect.id = `${providerKey}-model`;
-        modelSelect.name = `${providerKey}-model`;
-        provider.models.forEach(model => {
-            const option = document.createElement('option');
-            option.value = model;
-            option.textContent = model;
-            if (model === provider.selectedModel) {
-                option.selected = true;
-            }
-            modelSelect.appendChild(option);
-        });
-
-        modelSelect.addEventListener('change', (event) => {
-            provider.selectedModel = event.target.value;
-            console.log(`Selected model for ${provider.name}: ${provider.selectedModel}`);
-        });
-
-        providerDiv.innerHTML = `
-            <input type="checkbox" id="${providerKey}" name="provider" value="${providerKey}" checked>
-            <label for="${providerKey}">${provider.name}</label>
-        `;
-        providerDiv.appendChild(modelSelect);
-        modelNamesContainer.appendChild(providerDiv);
-    });
-}
-
-// Call this function to initialize the provider names when the page loads
-updateProviderNames();
 
 // Generic function to make API calls
 async function makeApiCall(provider, prompt) {
@@ -401,6 +357,8 @@ function getTokensPerSecondList(providerName) {
     }
 }
 
-// Expose API_PROVIDERS and getTokensPerSecondList to the global scope
+// Expose necessary functions to the global scope
 global.API_PROVIDERS = API_PROVIDERS;
 global.getTokensPerSecondList = getTokensPerSecondList;
+global.updateActiveProviders = updateActiveProviders;
+global.runSimultaneousComparison = runSimultaneousComparison;

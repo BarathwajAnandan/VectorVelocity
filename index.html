@@ -161,10 +161,7 @@
     </div>
     <div id="controls">
         <div id="modelNames">
-            <!-- <div class="model-name">API Provider 1: actual model name from drop down</div> -->
-            <!-- <div class="model-name">API Provider 2: actual model name from drop down</div> -->
-            <!-- <div class="model-name">API Provider 3: actual model name from drop down</div> -->
-            <!-- <div class="model-name">API Provider 4: actual model name from drop down</div> -->
+            <!-- Provider checkboxes and model selects will be dynamically added here -->
         </div>
         <button id="startButton">Start Race</button>
         <button id="stopButton">Stop Race</button>
@@ -303,6 +300,62 @@
                     car.position = 0;
                 });
             }
+        });
+
+        function updateProviderNames() {
+            const modelNamesContainer = document.getElementById('modelNames');
+            modelNamesContainer.innerHTML = ''; // Clear existing names
+
+            Object.keys(API_PROVIDERS).forEach(providerKey => {
+                const provider = API_PROVIDERS[providerKey];
+                const providerDiv = document.createElement('div');
+                providerDiv.className = 'model-name';
+                
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = providerKey;
+                checkbox.name = 'provider';
+                checkbox.value = providerKey;
+                checkbox.checked = true;
+
+                checkbox.addEventListener('change', (event) => {
+                    console.log(`Checkbox for ${providerKey} changed. Checked: ${event.target.checked}`);
+                    updateActiveProviders();
+                });
+
+                const label = document.createElement('label');
+                label.htmlFor = providerKey;
+                label.textContent = provider.name;
+
+                const modelSelect = document.createElement('select');
+                modelSelect.id = `${providerKey}-model`;
+                modelSelect.name = `${providerKey}-model`;
+                provider.models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model;
+                    option.textContent = model;
+                    if (model === provider.selectedModel) {
+                        option.selected = true;
+                    }
+                    modelSelect.appendChild(option);
+                });
+
+                modelSelect.addEventListener('change', (event) => {
+                    provider.selectedModel = event.target.value;
+                    console.log(`Selected model for ${provider.name}: ${provider.selectedModel}`);
+                });
+
+                providerDiv.appendChild(checkbox);
+                providerDiv.appendChild(label);
+                providerDiv.appendChild(modelSelect);
+                modelNamesContainer.appendChild(providerDiv);
+            });
+        }
+
+        // Call updateProviderNames when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            updateProviderNames();
+            updateActiveProviders();
         });
     </script>
 </body>
