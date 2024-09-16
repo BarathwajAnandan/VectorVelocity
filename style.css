@@ -1,6 +1,6 @@
 /* Set the basic styles for the entire page */
 body {
-    font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', sans-serif; /* Modern, clean font stack */
+    font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', sans-serif;
     min-height: 100vh;
     margin: 0;
     padding: 0;
@@ -8,6 +8,7 @@ body {
     color: white;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Prevent scrolling on the body */
 }
 
 /* Style the heading container */
@@ -20,26 +21,27 @@ body {
 
 .heading-container h1 {
     font-family: 'Poppins', sans-serif;
-    font-size: 2.5em;
-    margin-bottom: 10px;
+    font-size: 2em; /* Reduced font size */
+    margin-bottom: 5px; /* Reduced margin */
 }
 
 .heading-container p {
     font-family: 'Open Sans', sans-serif;
-    font-size: 1em;
-    margin: 5px 0;
+    font-size: 0.9em; /* Reduced font size */
+    margin: 3px 0; /* Reduced margin */
 }
 
 /* Style the main container that holds the race track and model names */
 .container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 20px;
+    grid-template-rows: 1fr auto;
+    gap: 10px; /* Reduced gap */
     width: 100%;
     flex-grow: 1;
-    padding: 20px;
+    padding: 10px; /* Reduced padding */
     box-sizing: border-box;
+    overflow: hidden; /* Prevent scrolling on the container */
 }
 
 /* Style the race track element */
@@ -48,9 +50,9 @@ body {
     grid-row: 1 / 2;
     background: linear-gradient(to bottom, #222, #111);
     position: relative;
-    border-radius: 20px;
+    border-radius: 10px; /* Reduced border radius */
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 /* Style each lane in the race track */
@@ -58,7 +60,7 @@ body {
     position: absolute;
     width: 100%;
     height: 25%;
-    border-top: 2px dashed rgba(255, 255, 255, 0.3);
+    border-top: 1px dashed rgba(255, 255, 255, 0.3); /* Thinner border */
     box-sizing: border-box;
 }
 
@@ -70,9 +72,9 @@ body {
 
 /* Style each car in the race */
 .car {
-    width: 100px;
+    width: 80px; /* Reduced width */
     position: absolute;
-    height: 50px;
+    height: 40px; /* Reduced height */
     left: 0;
     transition: left 0.1s linear, transform 0.3s ease-in-out;
     text-align: center;
@@ -80,11 +82,11 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 12px;
+    font-size: 10px; /* Reduced font size */
     color: white;
     text-shadow: 1px 1px 2px black;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 3px; /* Reduced border radius */
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
     animation: carAnimation 0.5s ease-in-out infinite alternate;
 }
 
@@ -97,9 +99,9 @@ body {
 
 /* Style the car image */
 .car img {
-    width: 100px;
-    height: 50px;
-    border-radius: 5px;
+    width: 80px; /* Reduced width */
+    height: 40px; /* Reduced height */
+    border-radius: 3px; /* Reduced border radius */
     position: absolute;
     top: 0;
     left: 0;
@@ -108,50 +110,51 @@ body {
 /* Style the information display for each car */
 .car-info {
     position: absolute;
-    bottom: 5px;
-    left: 5px;
-    right: 5px;
+    bottom: 3px;
+    left: 3px;
+    right: 3px;
     background: rgba(0, 0, 0, 0.5);
-    border-radius: 3px;
-    padding: 2px;
-    font-size: 10px;
-    font-family: 'Courier New', monospace; /* Use a monospace font for car info */
+    border-radius: 2px;
+    padding: 1px;
+    font-size: 8px; /* Reduced font size */
+    font-family: 'Courier New', monospace;
 }
 
 /* Style the car name */
 .car-name {
     font-weight: bold;
     text-transform: uppercase;
-    font-family: 'Orbitron', sans-serif; /* Futuristic font for car names */
+    font-family: 'Orbitron', sans-serif;
 }
 
 /* Style the car speed display */
 .car-speed {
     font-weight: bold;
-    font-family: 'Digital-7', 'Courier New', monospace; /* Digital-style font for speed */
+    font-family: 'Digital-7', 'Courier New', monospace;
 }
 
 /* Style the container for model names and controls */
 #modelNames {
     background-color: #1a1a1a;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 10px; /* Reduced padding */
+    border-radius: 5px; /* Reduced border radius */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     overflow: auto;
-    font-family: 'Poppins', sans-serif; /* Modern, clean font for model names */
+    font-family: 'Poppins', sans-serif;
+    max-height: calc(100vh - 250px); /* Limit height to fit screen */
 }
 
 #race-controls {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 10px;
+    gap: 5px; /* Reduced gap */
     background: linear-gradient(to right, #0a0a0a, #1a1a1a);
-    padding: 50px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    margin: 0 20px 20px 20px;
-    width: calc(50%);
+    padding: 10px; /* Reduced padding */
+    border-radius: 5px; /* Reduced border radius */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 0 10px 10px 10px; /* Reduced margin */
+    width: calc(50% - 20px); /* Adjusted width */
     overflow: auto;
 }
 
@@ -160,15 +163,14 @@ body {
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: flex-start;
-    gap: 15px;
+    gap: 10px; /* Reduced gap */
     background: linear-gradient(to bottom, #0a0a0a, #1a1a1a);
-    padding: 50px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    margin: 0 20px 20px 20px;
-    width: calc(50% ); /* Reduced from 70% to 60% */
-    min-height: 200px;
-    max-height: 300px;
+    padding: 10px; /* Reduced padding */
+    border-radius: 5px; /* Reduced border radius */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 0 10px 10px 10px; /* Reduced margin */
+    width: calc(50% - 20px); /* Adjusted width */
+    max-height: calc(100vh - 300px); /* Limit height to fit screen */
     overflow-y: auto;
 }
 
@@ -176,31 +178,30 @@ body {
 .model-name {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-    font-family: 'Montserrat', sans-serif; /* Modern, clean font for model names */
+    margin-bottom: 5px; /* Reduced margin */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9em; /* Reduced font size */
 }
 
 /* Style the label for each model name */
 .model-name label {
-    margin-right: 10px;
+    margin-right: 5px; /* Reduced margin */
 }
-
-/* Style the race controls container */
 
 /* Style the start and stop buttons */
 #startButton, #stopButton {
     margin: 0;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 8px 16px; /* Reduced padding */
+    font-size: 14px; /* Reduced font size */
     cursor: pointer;
     border: none;
-    border-radius: 5px;
+    border-radius: 3px; /* Reduced border radius */
     color: white;
     transition: background-color 0.3s;
     background-color: #007BFF;
-    font-family: 'Raleway', sans-serif; /* Modern, clean font for buttons */
-    text-transform: uppercase; /* Uppercase text for buttons */
-    letter-spacing: 1px; /* Add letter spacing for buttons */
+    font-family: 'Raleway', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Style the buttons on hover */
@@ -211,14 +212,14 @@ body {
 /* Style the finish line input */
 #finishLineInput {
     margin: 0;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 8px 16px; /* Reduced padding */
+    font-size: 14px; /* Reduced font size */
     background-color: #2a2a2a;
     border: 1px solid #444;
     color: #ddd;
-    width: 200px;
-    border-radius: 5px;
-    font-family: 'Roboto Mono', monospace; /* Monospace font for input */
+    width: 150px; /* Reduced width */
+    border-radius: 3px; /* Reduced border radius */
+    font-family: 'Roboto Mono', monospace;
 }
 
 /* Style the finish line input when focused */
@@ -230,13 +231,13 @@ body {
 /* Style the winner display */
 #winner {
     position: absolute;
-    top: 10px;
+    top: 5px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 24px;
+    font-size: 20px; /* Reduced font size */
     font-weight: bold;
     color: #FFD700;
-    text-shadow: 2px 2px 4px #000000;
+    text-shadow: 1px 1px 2px #000000;
     display: none;
     animation: winnerPulse 1.5s infinite;
     z-index: 1000;
@@ -244,17 +245,17 @@ body {
     text-align: center;
     pointer-events: none;
     background-color: rgba(0, 0, 0, 0.8);
-    padding: 15px;
-    border: 3px solid #FFD700;
-    border-radius: 10px;
-    box-shadow: 0 0 20px #FFD700;
-    font-family: 'Bangers', cursive; /* Fun, energetic font for winner display */
+    padding: 10px; /* Reduced padding */
+    border: 2px solid #FFD700;
+    border-radius: 5px; /* Reduced border radius */
+    box-shadow: 0 0 10px #FFD700;
+    font-family: 'Bangers', cursive;
 }
 
 /* Define the winner pulse animation */
 @keyframes winnerPulse {
     0% { transform: translateX(-50%) scale(1); }
-    50% { transform: translateX(-50%) scale(1.1); }
+    50% { transform: translateX(-50%) scale(1.05); }
     100% { transform: translateX(-50%) scale(1); }
 }
 
@@ -263,20 +264,21 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 5px;
-    margin-top: 10px;
-    font-family: 'Roboto', sans-serif; /* Changed font for stream mode options */
+    gap: 3px; /* Reduced gap */
+    margin-top: 5px; /* Reduced margin */
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9em; /* Reduced font size */
 }
 
 /* Style radio buttons and their containers */
 #streamModeContainer > div {
     display: flex;
     align-items: center;
-    font-family: 'Open Sans', sans-serif; /* Different font for radio button labels */
+    font-family: 'Open Sans', sans-serif;
 }
 
 input[type="radio"] {
-    margin-right: 5px;
+    margin-right: 3px; /* Reduced margin */
 }
 
 /* Style the prompt input */
@@ -284,12 +286,13 @@ input[type="radio"] {
     grid-column: 1 / 2;
     grid-row: 2 / 3;
     width: 100%;
-    padding: 10px;
+    padding: 8px; /* Reduced padding */
     border: 1px solid #333;
-    border-radius: 5px;
+    border-radius: 3px; /* Reduced border radius */
     background-color: #2a2a2a;
     color: #ddd;
     box-sizing: border-box;
-    margin-bottom: 10px;
-    font-family: 'Source Code Pro', monospace; /* Monospace font for prompt input */
+    margin-bottom: 5px; /* Reduced margin */
+    font-family: 'Source Code Pro', monospace;
+    font-size: 14px; /* Reduced font size */
 }
