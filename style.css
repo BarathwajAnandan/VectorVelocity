@@ -12,7 +12,7 @@ body {
 
 /* Style the heading container */
 .heading-container {
-    padding: 20px;
+    padding: 10px;
     background: linear-gradient(to bottom, #333, #222);
     text-align: center;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
