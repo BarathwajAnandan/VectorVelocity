@@ -25,9 +25,9 @@
             <!-- Provider checkboxes and model selects will be dynamically added here -->
             <div id="race-controls">
                 <div class="finish-line-control">
-                    <label for="finishLineInput" style="font-family: 'Montserrat', sans-serif; font-weight: 600;">TARGET DISTANCE (scaled Token/s):</label>
+                    <label for="finishLineInput" style="font-family: 'Montserrat', sans-serif; font-weight: 600;">FINISH DISTANCE (scaled Token/s):</label>
                     <br><br>
-                    <input type="number" id="finishLineInput" placeholder="Finish line distance" value="7000" min="1000" step="1000" style="font-family: 'Roboto', sans-serif;">
+                    <input type="number" id="finishLineInput" placeholder="Finish line distance" value="6000" min="1000" step="1000" style="font-family: 'Roboto', sans-serif;">
                     <div id="streamModeContainer" style="font-family: 'Open Sans', sans-serif;">
                         <h3 style="font-family: 'Poppins', sans-serif; font-weight: 700;">STREAM MODE</h3>
                         <div>
@@ -86,7 +86,7 @@
                 if (API_PROVIDERS[provider] && API_PROVIDERS[provider].active !== false) {
                     const car = document.createElement('div');
                     car.className = 'car';
-                    const topPosition =  5 + activeIndex * 25; // Using percentages: 20%, 40%, 60%, 80%
+                    const topPosition =  7.5 + activeIndex * 25; // Using percentages: 20%, 40%, 60%, 80%
                     car.style.top = `${topPosition}%`;
                     console.log(`Car for ${provider} positioned at top: ${topPosition}%`);
                     const randomImage = imageFiles[Math.floor(Math.random() * imageFiles.length)];
@@ -298,7 +298,7 @@
                 providerDiv.className = 'model-name';
                 providerDiv.style.display = 'grid';
                 
-                providerDiv.style.gridTemplateColumns = `auto ${120}px auto`;
+                providerDiv.style.gridTemplateColumns = `auto ${100}px auto`;
                 providerDiv.style.alignItems = 'center';
                 providerDiv.style.gap = '10px';
                 providerDiv.style.marginRight = '20px';
@@ -354,7 +354,6 @@
             promptInput.addEventListener('change', (event) => {
                 const prompt = event.target.value;
                 console.log('New prompt:', prompt);
-                // You can add logic here to use the new prompt in your race
             });
         }
 

@@ -155,6 +155,8 @@ async function* streamTokensPerSecond(provider, prompt) {
         let startTime = Date.now();
         let tokenCount = 0;
         let buffer = '';
+        let lastYieldTime = startTime;
+        const yieldInterval = 33; // Yield every 500ms
 
         while (true) {
             const { done, value } = await reader.read();
@@ -174,11 +176,15 @@ async function* streamTokensPerSecond(provider, prompt) {
                         const content = jsonData.choices[0]?.delta?.content || '';
                         if (content) {
                             tokenCount += content.trim().split(/\s+/).filter(word => word.length > 0).length;
-                            const elapsedTime = (Date.now() - startTime) / 1000;
-                            if (elapsedTime > 0) {
+                            const currentTime = Date.now();
+                            const elapsedTime = (currentTime - startTime) / 1000;
+                            
+                            if (currentTime - lastYieldTime >= yieldInterval) {
                                 const tokensPerSecond = tokenCount / elapsedTime;
+                                console.log('tokenCount:', tokenCount, 'elapsedTime:', elapsedTime.toFixed(3), 'tokensPerSecond:', tokensPerSecond.toFixed(2));  
                                 provider.tokensPerSecondList.push(tokensPerSecond);
                                 yield tokensPerSecond;
+                                lastYieldTime = currentTime;
                             }
                         }
                     } catch (parseError) {
@@ -332,7 +338,7 @@ function getTokensPerSecondList(providerName) {
 // Add this new function to get the current prompt
 function getCurrentPrompt() {
     const promptInput = document.getElementById('promptInput');
-    return promptInput.value || 'Tell me about the Milky Way galaxy in 100 words';
+    return promptInput.value || 'Tell me about the Milky Way galaxy in 200 words';
 }
 
 // Expose necessary functions to the global scope
