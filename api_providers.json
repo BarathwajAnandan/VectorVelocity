@@ -1,0 +1,52 @@
+{
+    "TOGETHERAI": {
+        "name": "TogetherAI",
+        "apiUrl": "https://api.together.xyz/v1/chat/completions",
+        "apiKey": "process.env.TOGETHERAI_API_KEY",
+        "models": [
+            "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+            "meta-llama/Meta-Llama-3.1-70B-Instruct",
+            "meta-llama/Meta-Llama-3.1-34B-Instruct"
+        ],
+        "selectedModel": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+        "makeApiCall": "makeTogetherAIApiCall",
+        "tokensPerSecondList": []
+    },
+    "GROQ": {
+        "name": "Groq",
+        "apiUrl": "https://api.groq.com/openai/v1/chat/completions",
+        "apiKey": "process.env.GROQ_API_KEY",
+        "models": [
+            "llama-3.1-70b-versatile",
+            "mixtral-8x7b-32768",
+            "llama3-70b-8192"
+        ],
+        "selectedModel": "llama3-70b-8192",
+        "makeApiCall": "makeGroqApiCall",
+        "tokensPerSecondList": []
+    },
+    "SAMBANOVA": {
+        "name": "SambaNova",
+        "apiUrl": "https://api.sambanova.ai/v1/chat/completions",
+        "apiKey": "process.env.SNOVA_API_KEY",
+        "models": [
+            "Meta-Llama-3.1-70B-Instruct",
+            "Meta-Llama-3.1-34B-Instruct"
+        ],
+        "selectedModel": "Meta-Llama-3.1-70B-Instruct",
+        "makeApiCall": "makeSambanovaApiCall",
+        "tokensPerSecondList": []
+    },
+    "NVIDIA": {
+        "name": "NVIDIA",
+        "apiUrl": "https://integrate.api.nvidia.com/v1/chat/completions",
+        "apiKey": "process.env.NVIDIA_API_KEY",
+        "models": [
+            "meta/llama-3.1-70b-instruct",
+            "meta/llama-3.1-34b-instruct"
+        ],
+        "selectedModel": "meta/llama-3.1-70b-instruct",
+        "makeApiCall": "makeNvidiaApiCall",
+        "tokensPerSecondList": []
+    }
+}

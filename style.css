@@ -1,30 +1,59 @@
+/* Set the basic styles for the entire page */
 body {
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', sans-serif; /* Modern, clean font stack */
     min-height: 100vh;
     margin: 0;
-    padding: 20px;
+    padding: 0;
     background: linear-gradient(to bottom, #222, #111);
     color: white;
-}
-.container {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 1200px;
-    margin-bottom: 20px;
+    flex-direction: column;
 }
+
+/* Style the heading container */
+.heading-container {
+    padding: 20px;
+    background: linear-gradient(to bottom, #333, #222);
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.heading-container h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.heading-container p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 1em;
+    margin: 5px 0;
+}
+
+/* Style the main container that holds the race track and model names */
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    flex-grow: 1;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Style the race track element */
 #raceTrack {
-    width: 60%;
-    height: 400px;
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
     background: linear-gradient(to bottom, #222, #111);
     position: relative;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
+
+/* Style each lane in the race track */
 .lane {
     position: absolute;
     width: 100%;
@@ -32,10 +61,14 @@ body {
     border-top: 2px dashed rgba(255, 255, 255, 0.3);
     box-sizing: border-box;
 }
+
+/* Position each lane */
 .lane:nth-child(1) { top: 0; }
 .lane:nth-child(2) { top: 25%; }
 .lane:nth-child(3) { top: 50%; }
 .lane:nth-child(4) { top: 75%; }
+
+/* Style each car in the race */
 .car {
     width: 100px;
     position: absolute;
@@ -54,11 +87,15 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     animation: carAnimation 0.5s ease-in-out infinite alternate;
 }
+
+/* Define the car animation */
 @keyframes carAnimation {
     0% { transform: translateY(0) rotate(-0deg); }
     50% { transform: translateY(-0px) rotate(0deg); }
     100% { transform: translateY(0) rotate(-1deg); }
 }
+
+/* Style the car image */
 .car img {
     width: 100px;
     height: 50px;
@@ -67,6 +104,8 @@ body {
     top: 0;
     left: 0;
 }
+
+/* Style the information display for each car */
 .car-info {
     position: absolute;
     bottom: 5px;
@@ -76,50 +115,79 @@ body {
     border-radius: 3px;
     padding: 2px;
     font-size: 10px;
+    font-family: 'Courier New', monospace; /* Use a monospace font for car info */
 }
+
+/* Style the car name */
 .car-name {
     font-weight: bold;
     text-transform: uppercase;
+    font-family: 'Orbitron', sans-serif; /* Futuristic font for car names */
 }
+
+/* Style the car speed display */
 .car-speed {
     font-weight: bold;
+    font-family: 'Digital-7', 'Courier New', monospace; /* Digital-style font for speed */
 }
+
+/* Style the container for model names and controls */
 #modelNames {
-    width: 35%;
     background-color: #1a1a1a;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-.model-name {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-.model-name label {
-    margin-right: 10px;
-}
-#controls {
-    width: 100%;
-    max-width: 1150px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    overflow: auto;
+    font-family: 'Poppins', sans-serif; /* Modern, clean font for model names */
 }
 
 #race-controls {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     gap: 10px;
-    background-color: #1a1a1a;
-    padding: 20px;
+    background: linear-gradient(to right, #0a0a0a, #1a1a1a);
+    padding: 50px;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    width: 100%;
+    margin: 0 20px 20px 20px;
+    width: calc(50%);
+    overflow: auto;
 }
 
+#providers_models {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 15px;
+    background: linear-gradient(to bottom, #0a0a0a, #1a1a1a);
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin: 0 20px 20px 20px;
+    width: calc(50% ); /* Reduced from 70% to 60% */
+    min-height: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Style each model name item */
+.model-name {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-family: 'Montserrat', sans-serif; /* Modern, clean font for model names */
+}
+
+/* Style the label for each model name */
+.model-name label {
+    margin-right: 10px;
+}
+
+/* Style the race controls container */
+
+/* Style the start and stop buttons */
 #startButton, #stopButton {
     margin: 0;
     padding: 10px 20px;
@@ -130,12 +198,17 @@ body {
     color: white;
     transition: background-color 0.3s;
     background-color: #007BFF;
+    font-family: 'Raleway', sans-serif; /* Modern, clean font for buttons */
+    text-transform: uppercase; /* Uppercase text for buttons */
+    letter-spacing: 1px; /* Add letter spacing for buttons */
 }
 
+/* Style the buttons on hover */
 #startButton:hover, #stopButton:hover {
     background-color: #0056b3;
 }
 
+/* Style the finish line input */
 #finishLineInput {
     margin: 0;
     padding: 10px 20px;
@@ -145,46 +218,78 @@ body {
     color: #ddd;
     width: 200px;
     border-radius: 5px;
+    font-family: 'Roboto Mono', monospace; /* Monospace font for input */
 }
 
+/* Style the finish line input when focused */
 #finishLineInput:focus {
     outline: none;
     border-color: #007BFF;
 }
 
+/* Style the winner display */
 #winner {
     position: absolute;
-    top: 50%;
+    top: 10px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 48px;
+    transform: translateX(-50%);
+    font-size: 24px;
     font-weight: bold;
     color: #FFD700;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    text-shadow: 2px 2px 4px #000000;
     display: none;
-    animation: winnerAnimation 1s ease-in-out;
+    animation: winnerPulse 1.5s infinite;
+    z-index: 1000;
+    width: auto;
+    text-align: center;
+    pointer-events: none;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border: 3px solid #FFD700;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #FFD700;
+    font-family: 'Bangers', cursive; /* Fun, energetic font for winner display */
 }
-@keyframes winnerAnimation {
-    0% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.1); }
-    100% { transform: translate(-50%, -50%) scale(1); }
+
+/* Define the winner pulse animation */
+@keyframes winnerPulse {
+    0% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.1); }
+    100% { transform: translateX(-50%) scale(1); }
 }
+
+/* Style the stream mode container */
 #streamModeContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: 5px;
     margin-top: 10px;
+    font-family: 'Roboto', sans-serif; /* Changed font for stream mode options */
 }
+
+/* Style radio buttons and their containers */
+#streamModeContainer > div {
+    display: flex;
+    align-items: center;
+    font-family: 'Open Sans', sans-serif; /* Different font for radio button labels */
+}
+
 input[type="radio"] {
     margin-right: 5px;
 }
+
+/* Style the prompt input */
 #promptInput {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
     width: 100%;
     padding: 10px;
-    margin-top: 20px;
     border: 1px solid #333;
     border-radius: 5px;
     background-color: #2a2a2a;
     color: #ddd;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    font-family: 'Source Code Pro', monospace; /* Monospace font for prompt input */
 }
