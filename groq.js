@@ -85,6 +85,10 @@ async function makeSambanovaApiCall(prompt) {
     return makeApiCall(API_PROVIDERS.SAMBANOVA, prompt);
 }
 
+async function makeCustomApiCall(prompt) {
+    return makeApiCall(API_PROVIDERS.CUSTOM, prompt);
+}
+
 async function makeNvidiaApiCall(prompt) {
     const headers = {
         'Authorization': `Bearer ${API_PROVIDERS.NVIDIA.apiKey}`,
