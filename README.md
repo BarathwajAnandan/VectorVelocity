@@ -10,6 +10,15 @@ VectorVelocity is a fun and interactive tool that gamifies the comparison of dif
 - Supports multiple AI providers  (Groq, SambaNova, NVIDIA, TogetherAI  and more coming soon and you can also add your own!)
 - Provides options for different race modes (instant or store-and-race)
 
+
+
+## Demo
+
+![Demo Video](images/demo.mov)
+
+
+
+
 ## Setup
 
 1. Clone the repository:
