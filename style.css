@@ -1,14 +1,29 @@
 /* Set the basic styles for the entire page */
 body {
+    /* Use a modern, sans-serif font stack for readability */
     font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', sans-serif;
-    height: 100vh;
+    
+    /* Make the body take up the full viewport height */
+    min-height: 95vh;
+    width: 95vw;
+    
+    /* Remove default margin and padding */
     margin: 0;
     padding: 0;
+    
+    /* Create a dark gradient background */
     background: linear-gradient(to bottom, #222, #111);
+    
+    /* Set text color to white for contrast against dark background */
     color: white;
+    
+    /* Use flexbox for vertical layout */
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    
+    /* Allow scrolling on the body */
+    overflow-y: auto;
+    margin: 0 auto;
 }
 
 /* Style the heading container */
