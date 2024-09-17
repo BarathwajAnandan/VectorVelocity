@@ -12,8 +12,10 @@ VectorVelocity is a fun and interactive tool that gamifies the comparison of dif
 
 ## DEMO
 
-https://github.com/user-attachments/assets/6082c080-c913-4044-a6bd-4db1f9b865d0  
-
+[![Watch the video](https://github.com/BarathwajAnandan/VectorVelocity/blob/main/images/0734B7CE-B018-4038-BB22-53FAF20AC9F6.gif)]([https://youtu.be/VIDEO_ID](https://github.com/BarathwajAnandan/VectorVelocity/blob/main/images/0734B7CE-B018-4038-BB22-53FAF20AC9F6.gif))
+ - YouTube
+Enjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.
+ 
 
 ## Setup
 
