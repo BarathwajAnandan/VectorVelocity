@@ -189,7 +189,7 @@ async function* streamTokensPerSecond(provider, prompt) {
         let tokenCount = 0;
         let buffer = '';
         let lastYieldTime = startTime;
-        const yieldInterval = 33; // Yield every 500ms
+        const yieldInterval = 33; // Yield every 33ms
 
         while (true) {
             const { done, value } = await reader.read();
@@ -214,10 +214,13 @@ async function* streamTokensPerSecond(provider, prompt) {
                             
                             if (currentTime - lastYieldTime >= yieldInterval) {
                                 const tokensPerSecond = tokenCount / elapsedTime;
-                                console.log('tokenCount:', tokenCount, 'elapsedTime:', elapsedTime.toFixed(3), 'tokensPerSecond:', tokensPerSecond.toFixed(2));  
+                                console.log('tokens:', tokenCount, 'time:', elapsedTime.toFixed(3), 't/s:', tokensPerSecond.toFixed(2));  
                                 provider.tokensPerSecondList.push(tokensPerSecond);
                                 yield tokensPerSecond;
                                 lastYieldTime = currentTime;
+
+                                // Update the UI with the current tokens per second
+                                updateTokensPerSecondUI(provider.name, tokensPerSecond);
                             }
                         }
                     } catch (parseError) {
@@ -229,7 +232,18 @@ async function* streamTokensPerSecond(provider, prompt) {
     } catch (error) {
         console.error('Error:', error);
         yield 0;
+    } finally {
+        // Update the UI one last time with isDone set to true
+        updateTokensPerSecondUI(provider.name, provider.tokensPerSecondList[provider.tokensPerSecondList.length - 1], true);
     }
+}
+
+// Function to update the UI with tokens per second
+function updateTokensPerSecondUI(providerName, tokensPerSecond, isDone = false) {
+    const event = new CustomEvent('updateTokensPerSecond', {
+        detail: {  providerName, tokensPerSecond, isDone }
+    });
+    window.dispatchEvent(event);
 }
 
 // Function to stream responses from all API providers concurrently

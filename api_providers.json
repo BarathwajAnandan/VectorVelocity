@@ -5,19 +5,28 @@
         "apiKey": "process.env.TOGETHERAI_API_KEY",
         "models": [
             "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
-            "add new supported models in api_providers.json"
+            "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+            "meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo",
+            "meta-llama/Meta-Llama-3-8B-Instruct-Turbo",
+            "meta-llama/Meta-Llama-3-70B-Instruct-Turbo",
+            "meta-llama/Llama-3-8b-chat-hf"
         ],
         "selectedModel": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
         "makeApiCall": "makeTogetherAIApiCall",
         "tokensPerSecondList": []
     },
-
     "GROQ": {
         "name": "Groq",
         "apiUrl": "https://api.groq.com/openai/v1/chat/completions",
         "apiKey": "process.env.GROQ_API_KEY",
         "models": [
+            "gemma-7b-it",
+            "gemma2-9b-it",
             "llama-3.1-70b-versatile",
+            "llama-3.1-8b-instant",
+            "llama-guard-3-8b",
+            "llama3-70b-8192",
+            "llama3-8b-8192",
             "mixtral-8x7b-32768",
             "add new supported models in api_providers.json"
         ],
@@ -30,7 +39,9 @@
         "apiUrl": "https://api.sambanova.ai/v1/chat/completions",
         "apiKey": "process.env.SNOVA_API_KEY",
         "models": [
+            "Meta-Llama-3.1-8B-Instruct",
             "Meta-Llama-3.1-70B-Instruct",
+            "Meta-Llama-3.1-405B-Instruct",
             "add new supported models in api_providers.json"
         ],
         "selectedModel": "Meta-Llama-3.1-70B-Instruct",
@@ -43,6 +54,7 @@
         "apiKey": "process.env.FIREWORKS_API_KEY",
         "models": [
             "accounts/fireworks/models/llama-v3p1-70b-instruct",
+            "accounts/fireworks/models/llama-v3p1-8b-instruct",
             "add new supported models in api_providers.json"
         ],
         "selectedModel": "accounts/fireworks/models/llama-v3p1-70b-instruct",

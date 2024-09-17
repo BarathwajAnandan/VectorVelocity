@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, height=device-height, initial-scale=0.95">
     <title>VectorVelocity</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Add this new style for the tokens per second display */
+        #tokensPerSecondDisplay {
+            position: fixed;
+            top: 60%; /* Move it below the loading indicator */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 9999; /* Set it below the loading indicator */
+            display: none;
+            font-family: 'Roboto', sans-serif;
+            max-height: 30vh; /* Limit the height */
+            overflow-y: auto; /* Add scrollbar if needed */
+        }
+    </style>
 </head>
 <body>
     <div class="heading-container">
@@ -62,6 +80,9 @@
         <div class="spinner"></div>
         <p>Calculating tokens...</p>
     </div>
+
+    <!-- Add this new div for displaying tokens per second -->
+    <div id="tokensPerSecondDisplay"></div>
 
     <script src="calculate_tokens.js"></script>
     <script>
@@ -201,6 +222,13 @@
         }
 
         async function startRace() {
+            // Reset tokensPerSecondList for each provider
+            for (const provider in API_PROVIDERS) {
+                if (API_PROVIDERS[provider].tokensPerSecondList) {
+                    API_PROVIDERS[provider].tokensPerSecondList = [];
+                }
+            }
+
             updateCars();
             Object.values(cars).forEach(car => {
                 car.element.style.left = '0px';
@@ -230,10 +258,13 @@
 
         function showLoadingIndicator() {
             document.getElementById('loadingIndicator').style.display = 'flex';
+            document.getElementById('tokensPerSecondDisplay').innerHTML = ''; // Clear previous results
+            document.getElementById('tokensPerSecondDisplay').style.display = 'block';
         }
 
         function hideLoadingIndicator() {
             document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('tokensPerSecondDisplay').style.display = 'none';
         }
 
         function finishProvider(provider, outOfTokens = false) 
@@ -365,7 +396,7 @@
                 checkbox.id = providerKey;
                 checkbox.name = 'provider';
                 checkbox.value = providerKey;
-                checkbox.checked = true;
+                checkbox.checked = (providerKey !== 'TOGETHERAI' && providerKey !== 'FIREWORKS');
 
                 checkbox.addEventListener('change', (event) => {
                     console.log(`Checkbox for ${providerKey} changed. Checked: ${event.target.checked}`);
@@ -404,6 +435,28 @@
                 modelNamesContainer.appendChild(providerDiv);
             });
         }
+
+        // Add this function to update the tokens per second display
+        function updateTokensPerSecondDisplay(providerName, tokensPerSecond, isDone = false) {
+            const display = document.getElementById('tokensPerSecondDisplay');
+            let providerDiv = document.getElementById(`${providerName}-tps`);
+            
+            if (!providerDiv) {
+                providerDiv = document.createElement('div');
+                providerDiv.id = `${providerName}-tps`;
+                display.appendChild(providerDiv);
+            }
+            
+            providerDiv.textContent = `${providerName}: current t/s: ${tokensPerSecond.toFixed(2)}`;
+            providerDiv.style.color = isDone ? 'lime' : 'white'; // Change color to green if done
+            display.style.display = 'block';
+        }
+
+        // Add this event listener to handle the custom event
+        window.addEventListener('updateTokensPerSecond', (event) => {
+            const { providerName, tokensPerSecond, isDone } = event.detail;
+            updateTokensPerSecondDisplay(providerName, tokensPerSecond, isDone);
+        });
 
         // Add this function to handle the prompt input
         function handlePromptInput() {
