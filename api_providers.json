@@ -5,8 +5,7 @@
         "apiKey": "process.env.TOGETHERAI_API_KEY",
         "models": [
             "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
-            "meta-llama/Meta-Llama-3.1-70B-Instruct",
-            "meta-llama/Meta-Llama-3.1-34B-Instruct"
+            "add new supported models in api_providers.json"
         ],
         "selectedModel": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
         "makeApiCall": "makeTogetherAIApiCall",
@@ -20,9 +19,9 @@
         "models": [
             "llama-3.1-70b-versatile",
             "mixtral-8x7b-32768",
-            "llama3-70b-8192"
+            "add new supported models in api_providers.json"
         ],
-        "selectedModel": "llama3-70b-8192",
+        "selectedModel": "llama-3.1-70b-versatile",
         "makeApiCall": "makeGroqApiCall",
         "tokensPerSecondList": []
     },
@@ -32,22 +31,22 @@
         "apiKey": "process.env.SNOVA_API_KEY",
         "models": [
             "Meta-Llama-3.1-70B-Instruct",
-            "Meta-Llama-3.1-34B-Instruct"
+            "add new supported models in api_providers.json"
         ],
         "selectedModel": "Meta-Llama-3.1-70B-Instruct",
         "makeApiCall": "makeSambanovaApiCall",
         "tokensPerSecondList": []
     },
-    "NVIDIA": {
-        "name": "NVIDIA",
-        "apiUrl": "https://integrate.api.nvidia.com/v1/chat/completions",
-        "apiKey": "process.env.NVIDIA_API_KEY",
+    "FIREWORKS": {
+        "name": "Fireworks",
+        "apiUrl": "https://api.fireworks.ai/inference/v1/chat/completions",
+        "apiKey": "process.env.FIREWORKS_API_KEY",
         "models": [
-            "meta/llama-3.1-70b-instruct",
-            "meta/llama-3.1-34b-instruct"
+            "accounts/fireworks/models/llama-v3p1-70b-instruct",
+            "add new supported models in api_providers.json"
         ],
-        "selectedModel": "meta/llama-3.1-70b-instruct",
-        "makeApiCall": "makeNvidiaApiCall",
+        "selectedModel": "accounts/fireworks/models/llama-v3p1-70b-instruct",
+        "makeApiCall": "makeFireworksAIApiCall",
         "tokensPerSecondList": []
     }
 }

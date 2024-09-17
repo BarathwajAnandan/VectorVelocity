@@ -1,6 +1,6 @@
 /* Set the basic styles for the entire page */
 body {
-    font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', sans-serif; /* Modern, clean font stack */
+    font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', sans-serif;
     height: 100vh;
     margin: 0;
     padding: 0;
@@ -13,12 +13,12 @@ body {
 
 /* Style the heading container */
 .heading-container {
-    padding: 15px;
+    padding: 10px;
     background: linear-gradient(45deg, #1a1a1a, #222);
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    margin: 15px 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin: 10px 15px;
     position: relative;
     z-index: 1;
     border: 1px solid #333;
@@ -27,22 +27,22 @@ body {
 }
 
 .heading-container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5), 0 3px 7px rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 2px 5px rgba(255, 255, 255, 0.1);
 }
 
 .heading-container h1 {
     font-family: 'Poppins', sans-serif;
-    font-size: 2.5em;
-    margin-bottom: 10px;
+    font-size: 2em;
+    margin-bottom: 5px;
     color: #eee;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .heading-container p {
     font-family: 'Open Sans', sans-serif;
-    font-size: 1em;
-    margin: 5px 0;
+    font-size: 0.9em;
+    margin: 3px 0;
     color: #bbb;
 }
 
@@ -51,10 +51,10 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    gap: 20px;
+    gap: 15px;
     width: 100%;
     flex-grow: 1;
-    padding: 20px;
+    padding: 15px;
     box-sizing: border-box;
 }
 
@@ -64,12 +64,10 @@ body {
     grid-row: 1 / 2;
     background: linear-gradient(to bottom, #222, #111);
     position: relative;
-    border-radius: 20px;
+    border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
 }
-
 
 
 /* Style each lane in the race track */

@@ -9,9 +9,17 @@
 <body>
     <div class="heading-container">
         <h1>Vector Velocity</h1>
-        <p>Compare the speed of different AI models in a fun and interactive way.</p>
-        <p>Select your favorite model and watch it race to the finish line.</p>
-        <p>The race is run using the same prompt for all models, and the speed is measured in (~tokens ) words per second (WPS).</p>
+        <p>Race the APIs against each other using the same prompt and measure their speed in words (~tokens) per second.</p>
+        <div class="instructions">
+            <ol>
+                <p>Add your API key(s) in the .env file</p>
+                <p>Select your desired model(s) and provider(s) below</p>
+                <p>Enter a prompt in the input field</p>
+                <p>Click "Start Race" and watch the APIs compete!</p>
+            </ol>
+        </div>
+        <p>Compare which AI API is better suited for your needs based on speed.</p>
+        
     </div>
     <div class="container">
         <div id="raceTrack">
@@ -50,7 +58,7 @@
         </div>
     </div>
 
-    <script src="groq.js"></script>
+    <script src="calculate_tokens.js"></script>
     <script>
         const raceTrack = document.getElementById('raceTrack');
         const startButton = document.getElementById('startButton');
@@ -78,7 +86,7 @@
             raceTrack.innerHTML = ''; // Clear existing lanes
             console.log('Providers:', providers);
             console.log('API_PROVIDERS:', API_PROVIDERS);
-            const activeCars = providers.filter(provider => {
+            const activeCars =  providers.filter(provider => {
                 console.log(`Checking provider: ${provider}`);
                 console.log(`API_PROVIDERS[${provider}]:`, API_PROVIDERS[provider]);
                 console.log(`API_PROVIDERS[${provider}].active:`, API_PROVIDERS[provider] ? API_PROVIDERS[provider].active : 'undefined');
@@ -131,7 +139,11 @@
         function logCarLanePositions() {
             console.log('Current car lane positions:');
             for (const [provider, car] of Object.entries(cars)) {
-                console.log(`${API_PROVIDERS[provider].name}: ${car.lanePosition}%`);
+                if (API_PROVIDERS[provider] && API_PROVIDERS[provider].name) {
+                    console.log(`${API_PROVIDERS[provider].name}: ${car.lanePosition}%`);
+                } else {
+                    console.log(`Unknown provider (${provider}): ${car.lanePosition}%`);
+                }
             }
         }
 

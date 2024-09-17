@@ -75,7 +75,7 @@ VectorVelocity is designed to be easily extensible. You can add your own endpoin
    YOUR_PROVIDER_API_KEY=your_api_key_here
    ```
 
-3. Create an API call wrapper function in `groq.js`:
+3. Create an API call wrapper function in `calculate_tokens.js`:
    Add a new function similar to the existing ones, like this:
 
    ```javascript

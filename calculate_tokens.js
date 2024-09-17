@@ -150,6 +150,35 @@ async function makeTogetherAIApiCall(prompt) {
     return response.body.getReader();
 }
 
+async function makeFireworksAIApiCall(prompt) {
+    const headers = {
+        'Authorization': `Bearer ${API_PROVIDERS.FIREWORKS.apiKey}`,
+        'Content-Type': 'application/json'
+    };
+    
+    const payload = {
+        model: API_PROVIDERS.FIREWORKS.selectedModel,
+        messages: [
+            { role: 'user', content: prompt }
+        ],
+        stream: true,
+        temperature: 1,
+        top_p: 1,
+        top_k: 50
+    };
+
+    const response = await fetch(API_PROVIDERS.FIREWORKS.apiUrl, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response.body.getReader();
+}
 // Function to stream tokens per second
 async function* streamTokensPerSecond(provider, prompt) {
     try {
