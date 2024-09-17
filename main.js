@@ -11,7 +11,7 @@ function createWindow () {
 
   win.loadFile('index.html')
   win.maximize()
-  win.setFullScreen(true)
+  // win.setFullScreen(true)
 
   win.on('closed', () => {
     app.quit()

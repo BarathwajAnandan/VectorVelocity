@@ -251,12 +251,7 @@ async function streamAllProviders(prompt) {
 
         console.log(`Starting to handle stream for ${name}`);
 
-        let skipCount = 0;
         for await (const value of stream) {
-            if (skipCount < 4) {
-                skipCount++;
-                continue;
-            }
 
             if (value > 0) {
                 const provider = Object.values(API_PROVIDERS).find(p => p.name === name);
@@ -299,7 +294,7 @@ async function runSimultaneousComparison() {
     for (const [providerName, result] of Object.entries(results)) {
         console.log(`Results for ${providerName}:`, result);
     }
-
+    
     console.log('Finished simultaneous comparison');
     return results;
 }

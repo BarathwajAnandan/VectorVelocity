@@ -14,8 +14,8 @@
             <ol>
                 <p>Add your API key(s) in the .env file</p>
                 <p>Select your desired model(s) and provider(s) below</p>
-                <p>Enter a prompt in the input field</p>
-                <p>Click "Start Race" and watch the APIs compete!</p>
+                <p>Enter a prompt in the input field ( ~150 words recommended )</p>
+                <p>Click "Start Race" and watch the APIs compete! ( store and race mode may take a while to start  )</p>
             </ol>
         </div>
         <p>Compare which AI API is better suited for your needs based on speed.</p>
@@ -31,16 +31,16 @@
                 <div class="finish-line-control">
                     <label for="finishLineInput" style="font-family: 'Montserrat', sans-serif; font-weight: 600;">FINISH DISTANCE (scaled Token/s):</label>
                     <br><br>
-                    <input type="number" id="finishLineInput" placeholder="Finish line distance" value="6000" min="1000" step="1000" style="font-family: 'Roboto', sans-serif;">
+                    <input type="number" id="finishLineInput" placeholder="Finish line distance" value="4000" min="1000" step="1000" style="font-family: 'Roboto', sans-serif;">
                     <div id="streamModeContainer" style="font-family: 'Open Sans', sans-serif;">
                         <h3 style="font-family: 'Poppins', sans-serif; font-weight: 700;">STREAM MODE</h3>
                         <div>
-                            <input type="radio" id="streamModeDirect" name="streamMode" value="direct">
-                            <label for="streamModeDirect" style="font-family: 'Lato', sans-serif;">INSTANT: Generate and race simultaneously</label>
+                            <input type="radio" id="streamModeDirect" name="streamMode" value="direct" disabled>
+                            <label for="streamModeDirect" style="font-family: 'Lato', sans-serif; color: #999;">INSTANT: Generate and race simultaneously (Coming Soon)</label>
                         </div>
                         <div>
                             <input type="radio" id="streamModeSave" name="streamMode" value="save" checked>
-                            <label for="streamModeSave" style="font-family: 'Lato', sans-serif;">STORE AND RACE: Generate content first, then race</label>
+                            <label for="streamModeSave" style="font-family: 'Lato', sans-serif;">STORE AND RACE: Generate response for all providers first, then race</label>
                         </div>
                     </div>
                 </div>
@@ -50,12 +50,17 @@
             </div>
         </div>
         <div id="promptInputContainer">
-            <input type="text" id="promptInput" placeholder="Enter your prompt here">
+            <input type="text" id="promptInput" placeholder="Enter prompt (Default: Tell me about the Milky Way galaxy in 200 words')">
             <div id="raceButtons">
                 <button id="startButton">Start Race</button>
                 <button id="stopButton">Stop Race</button>
             </div>
         </div>
+    </div>
+
+    <div id="loadingIndicator" class="loading-indicator">
+        <div class="spinner"></div>
+        <p>Calculating tokens...</p>
     </div>
 
     <script src="calculate_tokens.js"></script>
@@ -204,15 +209,15 @@
                 car.index = 0;
                 car.outOfTokens = false;
             });
-            // winnerDisplay.style.display = 'none';
             raceActive = true;
             finishedProviders.clear();
 
-            // Use the current prompt when starting the race
             const currentPrompt = getCurrentPrompt();
             console.log(`Starting race with prompt: ${currentPrompt}`);
             if (streamModeSave.checked) {
+                showLoadingIndicator(); // Show loading indicator
                 await runSimultaneousComparison();
+                hideLoadingIndicator(); // Hide loading indicator
             }
 
             for (const provider of providers) {
@@ -222,6 +227,15 @@
             }
             moveCards();
         }
+
+        function showLoadingIndicator() {
+            document.getElementById('loadingIndicator').style.display = 'flex';
+        }
+
+        function hideLoadingIndicator() {
+            document.getElementById('loadingIndicator').style.display = 'none';
+        }
+
         function finishProvider(provider, outOfTokens = false) 
         {
             console.log(`finishProvider called for ${provider}. Out of tokens: ${outOfTokens}`);
