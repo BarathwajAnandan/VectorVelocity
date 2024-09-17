@@ -10,6 +10,11 @@ VectorVelocity is a fun and interactive tool that gamifies the comparison of dif
 - Supports multiple AI providers  (Groq, SambaNova, NVIDIA, TogetherAI  and more coming soon and you can also add your own!)
 - Provides options for different race modes (instant or store-and-race)
 
+## DEMO
+
+https://github.com/user-attachments/assets/6082c080-c913-4044-a6bd-4db1f9b865d0  
+
+
 ## Setup
 
 1. Clone the repository:
@@ -28,7 +33,7 @@ VectorVelocity is a fun and interactive tool that gamifies the comparison of dif
    GROQ_API_KEY=your_groq_api_key
    SNOVA_API_KEY=your_sambanova_api_key
    TOGETHERAI_API_KEY=your_togetherai_api_key
-   NVIDIA_API_KEY=your_nvidia_api_key
+   ....
    ```
 
 4. Run the application:
