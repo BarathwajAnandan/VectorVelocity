@@ -253,6 +253,8 @@ body {
     font-family: 'Raleway', sans-serif; /* Modern, clean font for buttons */
     text-transform: uppercase; /* Uppercase text for buttons */
     letter-spacing: 1px; /* Add letter spacing for buttons */
+    position: relative;
+    z-index: 10000; /* Higher than the loading indicator */
 }
 
 /* Style the buttons on hover */
