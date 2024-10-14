@@ -163,14 +163,14 @@ export default function Home() {
                   <Legend />
                   <Line
                     type="monotone"
-                    dataKey="groq"
+                    dataKey="Groq"
                     stroke="#8884d8"
                     activeDot={{ r: 8 }}
                     name="Groq"
                   />
                   <Line
                     type="monotone"
-                    dataKey="sambanova"
+                    dataKey="SambaNova"
                     stroke="#ffc658"
                     activeDot={{ r: 8 }}
                     name="SambaNova"
