@@ -28,14 +28,6 @@ async function getMetrics(): Promise<LatestMetrics> {
         provider: Provider.SAMBANOVA,
         tokenVelocity: getRandomInteger(300, 500),
       },
-      {
-        provider: Provider.TOGETHER_AI,
-        tokenVelocity: getRandomInteger(300, 500),
-      },
-      {
-        provider: Provider.FIREWORKS,
-        tokenVelocity: getRandomInteger(300, 500),
-      },
     ],
   };
 }

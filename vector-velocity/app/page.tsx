@@ -141,18 +141,6 @@ export default function Home() {
               max={1000}
               label="SambaNova"
             />
-            <Speedometer
-              value={getProviderMetrics(Provider.TOGETHER_AI)?.tokenVelocity!}
-              min={0}
-              max={1000}
-              label="TogetherAI"
-            />
-            <Speedometer
-              value={getProviderMetrics(Provider.FIREWORKS)?.tokenVelocity!}
-              min={0}
-              max={1000}
-              label="Fireworks"
-            />
           </CardContent>
           <CardFooter className="pt-4">
             <p className="text-xs text-muted-foreground">
@@ -182,24 +170,10 @@ export default function Home() {
                   />
                   <Line
                     type="monotone"
-                    dataKey="fireworks"
-                    stroke="#82ca9d"
-                    activeDot={{ r: 8 }}
-                    name="Fireworks"
-                  />
-                  <Line
-                    type="monotone"
                     dataKey="sambanova"
                     stroke="#ffc658"
                     activeDot={{ r: 8 }}
                     name="SambaNova"
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="together_ai"
-                    stroke="#cb0fff"
-                    activeDot={{ r: 8 }}
-                    name="TogetherAI"
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -208,51 +182,27 @@ export default function Home() {
         </Card>
         <ProviderMetricWidgets
           averageTokenVelocity={
-            allProviderMetrics?.groq?.averageTokenVelocity.metricValue!
+            allProviderMetrics?.Groq?.averageTokenVelocity.metricValue!
           }
           peakTokenVelocity={
-            allProviderMetrics?.groq?.peakTokenVelocity.metricValue!
+            allProviderMetrics?.Groq?.peakTokenVelocity.metricValue!
           }
           lowestTokenVelocity={
-            allProviderMetrics?.groq?.lowestTokenVelocity.metricValue!
+            allProviderMetrics?.Groq?.lowestTokenVelocity.metricValue!
           }
           label="Groq"
         />
         <ProviderMetricWidgets
           averageTokenVelocity={
-            allProviderMetrics?.sambanova?.averageTokenVelocity.metricValue!
+            allProviderMetrics?.SambaNova?.averageTokenVelocity.metricValue!
           }
           peakTokenVelocity={
-            allProviderMetrics?.sambanova?.peakTokenVelocity.metricValue!
+            allProviderMetrics?.SambaNova?.peakTokenVelocity.metricValue!
           }
           lowestTokenVelocity={
-            allProviderMetrics?.sambanova?.lowestTokenVelocity.metricValue!
+            allProviderMetrics?.SambaNova?.lowestTokenVelocity.metricValue!
           }
           label="SambaNova"
-        />
-        <ProviderMetricWidgets
-          averageTokenVelocity={
-            allProviderMetrics?.fireworks?.averageTokenVelocity.metricValue!
-          }
-          peakTokenVelocity={
-            allProviderMetrics?.fireworks?.peakTokenVelocity.metricValue!
-          }
-          lowestTokenVelocity={
-            allProviderMetrics?.fireworks?.lowestTokenVelocity.metricValue!
-          }
-          label="Fireworks"
-        />
-        <ProviderMetricWidgets
-          averageTokenVelocity={
-            allProviderMetrics?.together_ai?.averageTokenVelocity.metricValue!
-          }
-          peakTokenVelocity={
-            allProviderMetrics?.together_ai?.peakTokenVelocity.metricValue!
-          }
-          lowestTokenVelocity={
-            allProviderMetrics?.together_ai?.lowestTokenVelocity.metricValue!
-          }
-          label="TogetherAI"
         />
       </div>
     </div>

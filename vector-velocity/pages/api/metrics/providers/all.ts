@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ProviderMetrics, Provider, AllProviderMetrics } from "@/types/metrics";
+import { AllProviderMetrics } from "@/types/metrics";
 import { getRandomInteger } from "@/lib/utils";
 
 export default async function handler(
@@ -33,9 +33,7 @@ async function getMetrics(): Promise<AllProviderMetrics> {
   };
 
   return {
-    groq: dummyMetrics,
-    fireworks: dummyMetrics,
-    sambanova: dummyMetrics,
-    together_ai: dummyMetrics,
+    Groq: dummyMetrics,
+    SambaNova: dummyMetrics,
   };
 }

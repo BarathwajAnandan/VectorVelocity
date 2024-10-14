@@ -30,14 +30,6 @@ async function getMetrics(): Promise<RecentMetrics> {
             provider: Provider.SAMBANOVA,
             tokenVelocity: getRandomInteger(300, 500),
           },
-          {
-            provider: Provider.TOGETHER_AI,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.FIREWORKS,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
         ],
       },
       {
@@ -49,14 +41,6 @@ async function getMetrics(): Promise<RecentMetrics> {
           },
           {
             provider: Provider.SAMBANOVA,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.TOGETHER_AI,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.FIREWORKS,
             tokenVelocity: getRandomInteger(300, 500),
           },
         ],
@@ -72,14 +56,6 @@ async function getMetrics(): Promise<RecentMetrics> {
             provider: Provider.SAMBANOVA,
             tokenVelocity: getRandomInteger(300, 500),
           },
-          {
-            provider: Provider.TOGETHER_AI,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.FIREWORKS,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
         ],
       },
       {
@@ -93,14 +69,6 @@ async function getMetrics(): Promise<RecentMetrics> {
             provider: Provider.SAMBANOVA,
             tokenVelocity: getRandomInteger(300, 500),
           },
-          {
-            provider: Provider.TOGETHER_AI,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.FIREWORKS,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
         ],
       },
       {
@@ -112,14 +80,6 @@ async function getMetrics(): Promise<RecentMetrics> {
           },
           {
             provider: Provider.SAMBANOVA,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.TOGETHER_AI,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.FIREWORKS,
             tokenVelocity: getRandomInteger(300, 500),
           },
         ],

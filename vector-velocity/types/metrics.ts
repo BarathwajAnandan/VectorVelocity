@@ -1,8 +1,6 @@
 export enum Provider {
-  GROQ = "groq",
-  SAMBANOVA = "sambanova",
-  TOGETHER_AI = "together_ai",
-  FIREWORKS = "fireworks",
+  GROQ = "Groq",
+  SAMBANOVA = "SambaNova",
 }
 
 export type Metric = {
