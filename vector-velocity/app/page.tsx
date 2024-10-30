@@ -37,7 +37,6 @@ const Loading = () => (
 );
 
 export default function Home() {
-  const [metrics, setMetrics] = useState<RecentMetrics>();
   const [latestMetrics, setLatestMetrics] = useState<LatestMetrics>();
   const [allProviderMetrics, setAllProviderMetrics] =
     useState<AllProviderMetrics>();
@@ -85,7 +84,6 @@ export default function Home() {
           return response.json();
         })
         .then((data) => {
-          setMetrics(data);
           updateLatestMetrics(data);
           const modifiedMetrics = modifyMetricsForGraph(data.recentMetrics);
           modifiedMetrics.sort((a, b) => {
@@ -181,9 +179,6 @@ export default function Home() {
           </CardContent>
         </Card>
         <ProviderMetricWidgets
-          averageTokenVelocity={
-            allProviderMetrics?.Groq?.averageTokenVelocity.metricValue!
-          }
           peakTokenVelocity={
             allProviderMetrics?.Groq?.peakTokenVelocity.metricValue!
           }
@@ -193,9 +188,6 @@ export default function Home() {
           label="Groq"
         />
         <ProviderMetricWidgets
-          averageTokenVelocity={
-            allProviderMetrics?.SambaNova?.averageTokenVelocity.metricValue!
-          }
           peakTokenVelocity={
             allProviderMetrics?.SambaNova?.peakTokenVelocity.metricValue!
           }

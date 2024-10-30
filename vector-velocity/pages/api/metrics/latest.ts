@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { LatestMetrics, Provider } from "@/types/metrics";
-import { getRandomInteger } from "@/lib/utils";
+import { LatestMetrics } from "@/types/metrics";
+import { promises as fs } from "fs";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,18 +16,10 @@ export default async function handler(
 }
 
 async function getMetrics(): Promise<LatestMetrics> {
-  // TODO: Fetch metrics from local storage
-  return {
-    metricDate: "2023-06-15",
-    metrics: [
-      {
-        provider: Provider.GROQ,
-        tokenVelocity: getRandomInteger(300, 500),
-      },
-      {
-        provider: Provider.SAMBANOVA,
-        tokenVelocity: getRandomInteger(300, 500),
-      },
-    ],
-  };
+  console.log(`${process.cwd()}`);
+  const latestMetrics = await fs.readFile(
+    `${process.cwd()}/metrics/latest_metrics/metrics.json`,
+    "utf8",
+  );
+  return JSON.parse(latestMetrics);
 }

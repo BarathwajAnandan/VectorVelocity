@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { RecentMetrics, Provider } from "@/types/metrics";
-import { getRandomInteger } from "@/lib/utils";
+import { promises as fs } from "fs";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,74 +16,9 @@ export default async function handler(
 }
 
 async function getMetrics(): Promise<RecentMetrics> {
-  // TODO: Fetch metrics from local storage
-  return {
-    recentMetrics: [
-      {
-        metricDate: "2023-06-12",
-        metrics: [
-          {
-            provider: Provider.GROQ,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.SAMBANOVA,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-        ],
-      },
-      {
-        metricDate: "2023-06-13",
-        metrics: [
-          {
-            provider: Provider.GROQ,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.SAMBANOVA,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-        ],
-      },
-      {
-        metricDate: "2023-06-14",
-        metrics: [
-          {
-            provider: Provider.GROQ,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.SAMBANOVA,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-        ],
-      },
-      {
-        metricDate: "2023-06-15",
-        metrics: [
-          {
-            provider: Provider.GROQ,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.SAMBANOVA,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-        ],
-      },
-      {
-        metricDate: "2023-06-16",
-        metrics: [
-          {
-            provider: Provider.GROQ,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-          {
-            provider: Provider.SAMBANOVA,
-            tokenVelocity: getRandomInteger(300, 500),
-          },
-        ],
-      },
-    ],
-  };
+  const recentMetrics = await fs.readFile(
+    `${process.cwd()}/metrics/recent_metrics/metrics.json`,
+    "utf8",
+  );
+  return JSON.parse(recentMetrics);
 }

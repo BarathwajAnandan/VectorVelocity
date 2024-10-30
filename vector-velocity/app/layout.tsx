@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { cn } from "@/lib/utils";
-import { Gauge, Zap } from "lucide-react";
+import { Zap } from "lucide-react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

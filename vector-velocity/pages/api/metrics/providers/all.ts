@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { AllProviderMetrics } from "@/types/metrics";
-import { getRandomInteger } from "@/lib/utils";
+import { promises as fs } from "fs";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,24 +16,17 @@ export default async function handler(
 }
 
 async function getMetrics(): Promise<AllProviderMetrics> {
-  // TODO: Fetch metrics from local storage
-  const dummyMetrics = {
-    averageTokenVelocity: {
-      metricDate: "2023-06-15",
-      metricValue: getRandomInteger(300, 500),
-    },
-    peakTokenVelocity: {
-      metricDate: "2023-06-15",
-      metricValue: getRandomInteger(300, 500),
-    },
-    lowestTokenVelocity: {
-      metricDate: "2023-06-15",
-      metricValue: getRandomInteger(300, 500),
-    },
-  };
+  const groqMetrics = await fs.readFile(
+    `${process.cwd()}/metrics/Groq/metrics.json`,
+    "utf8",
+  );
+  const sambaNovaMetrics = await fs.readFile(
+    `${process.cwd()}/metrics/SambaNova/metrics.json`,
+    "utf8",
+  );
 
   return {
-    Groq: dummyMetrics,
-    SambaNova: dummyMetrics,
+    Groq: JSON.parse(groqMetrics),
+    SambaNova: JSON.parse(sambaNovaMetrics),
   };
 }
